@@ -1,8 +1,12 @@
 'use client'
-import { useForm } from 'react-hook-form';
+import { FieldErrors, useForm } from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {api} from '../lib/axios';
+import Input  from '../components/input';
+import ValidatorMessage from '../components/validator-message';
+import useTokenStore from '../lib/zustand';
+import { useRouter } from 'next/navigation';
 
 
 const loginSchema = z.object({   
@@ -18,20 +22,29 @@ export default function Login() {
         resolver:zodResolver(loginSchema)
     });
 
+    const { setToken} = useTokenStore();
+    const router = useRouter();
+
     async function login (data:LoginFormData){
+
 
         try
         {
-            const response = await api.post('/api/login', data);
-            console.log(response.data);
+            const response = await api.post('/api/login', data);            
+            const result = response.data;
+
+            if(result.isSuccess)
+            {
+                setToken(response.data.value.authToken);
+                router.push('/');
+
+            }        
         }
         catch(error)
         {
             console.error('Login failed', error);
         }
-
-
-        console.log(data);
+    
     }
     
     return (  
@@ -42,12 +55,13 @@ export default function Login() {
 
             <form className="flex flex-col gap-4 w-full max-w-xs" onSubmit={handleSubmit(login)}>                
                 <div className='flex flex-col gap-1'>
-                    <input {...register("username")} className="rounded border border-zinc-400 shadow-sm w-full h-10 px-2" type="text" placeholder="Nome de usuário"/>
-                    {errors.username && <span className="text-red-600 text-xs font-semibold w-full">{errors.username.message}</span>}
+                   <Input register={register('username')} name="username" type="text" placeholder="Nome de usuário" />
+                   {errors.username && <ValidatorMessage>{errors.username.message}</ValidatorMessage>}
+
                 </div>
                 <div className='flex flex-col gap-1'>
-                    <input {...register("password")} className="rounded border border-zinc-400 shadow-sm w-full h-10 px-2" type="password" placeholder="Senha"/>
-                    {errors.password && <span className="text-red-600 text-xs font-semibold w-full">{errors.password.message}</span>}
+                    <Input register={register('password')} type="password" placeholder="Senha" />
+                    {errors.password && <ValidatorMessage>{errors.password.message}</ValidatorMessage>}
                 </div>
                 <button className="bg-sky-400 rounded font-semibold text-white hover:bg-sky-600 p-1" type="submit">Entrar</button>
             </form>

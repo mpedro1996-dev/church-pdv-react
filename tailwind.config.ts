@@ -15,6 +15,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tw-elements/plugin.cjs")],
 };
 export default config;
