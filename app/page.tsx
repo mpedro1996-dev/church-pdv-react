@@ -8,12 +8,14 @@ export default function Home() {
   const { token, setToken} = useTokenStore();
   const router = useRouter();
 
+  /*
+
   useEffect(() => {
     if (token === null) {
       router.push('/login');
     }
   }, [token, router]);
-
+*/
   return (
     <div className="h-screen flex flex-col gap-2">
       <Navbar/>
