@@ -5,7 +5,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {api} from '../lib/axios';
 import Input  from '../components/input';
 import ValidatorMessage from '../components/validator-message';
-import useTokenStore from '../lib/zustand';
+import {useTokenStore} from '../lib/zustand';
 import { useRouter } from 'next/navigation';
 
 
@@ -26,8 +26,6 @@ export default function Login() {
     const router = useRouter();
 
     async function login (data:LoginFormData){
-
-
         try
         {
             const response = await api.post('/api/login', data);            

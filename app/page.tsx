@@ -1,21 +1,19 @@
 'use client'
-import useTokenStore from './lib/zustand';
+import {useTokenStore} from './lib/zustand';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import Navbar from './components/navbar';
 
 export default function Home() {
-  const { token, setToken} = useTokenStore();
+  const { token} = useTokenStore();
   const router = useRouter();
-
-  /*
-
+  
   useEffect(() => {
     if (token === null) {
       router.push('/login');
     }
   }, [token, router]);
-*/
+
   return (
     <div className="h-screen flex flex-col gap-2">
       <Navbar/>

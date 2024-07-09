@@ -1,6 +1,7 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+
 import CurrencyFormatter from "./currency-formatter"
 import { faBarcode, faPlus } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 interface ProductProps{
     name:string;
@@ -11,7 +12,7 @@ interface ProductProps{
 export default function Product(props:ProductProps){
 
     return(
-        <div className="flex flex-col w-36 border rounded">
+        <div className="flex flex-col w-100 border rounded">
             <div className="p-2">
                 <div className="flex font-bold text-sm">
                     {props.name}
