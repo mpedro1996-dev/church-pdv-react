@@ -6,7 +6,7 @@ import Product from "../components/product";
 import { faWallet} from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
-import {useProductStore, useTokenStore} from "../lib/zustand"
+import {useProductStore, useSaleItemStore, useTokenStore} from "../lib/zustand"
 import { useEffect, useState } from "react";
 import {api} from '../lib/axios';
 import { useRouter } from 'next/navigation';
@@ -16,12 +16,12 @@ export default function Sale(){
 
     const { token } = useTokenStore();
     const { products, setProducts } = useProductStore();
+    const {saleItems} = useSaleItemStore();
     const [searchTerm, setSearchTerm] = useState('');
   
     useEffect(() => {
       async function GetProducts() {
 
-        console.log(token);
         if (!token) {
           console.error('No token found');
           return;
@@ -70,13 +70,13 @@ export default function Sale(){
                         <div className="overflow-y-scroll">
                             <div className="grid grid-flow-rows grid-cols-3 md:grid-cols-4 lg:grid-cols-6 p-2 gap-2 ">
                                 {filteredProducts.map((product)=>(
-                                    <Product key={product.id} name={product.name} barcode={product.barcode} unitPrice={product.price}/>
+                                    <Product key={product.id} id={product.id} category={product.category} name={product.name} barcode={product.barcode} unitPrice={product.price}/>
                                 ))}                   
                                
                             </div>
                         </div>
                         <div className="flex justify-end mt-auto p-2 border-t">                   
-                            <button className="flex items-center gap-1 border rounded px-2 py-1 bg-green-500 font-bold text-white" type="button">
+                            <button disabled={saleItems.length === 0} className="flex items-center gap-1 border rounded px-2 py-1 bg-green-500 font-bold text-white disabled:bg-zinc-400 disabled:text-zinc-100" type="button">
                                 <FontAwesomeIcon icon={faWallet}/>
                                 Pagar
                             </button>
