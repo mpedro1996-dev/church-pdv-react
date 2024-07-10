@@ -51,6 +51,16 @@ export default function Sale(){
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (product.barcode && product.barcode == searchTerm)
     );
+
+    const isDisabled = saleItems.length === 0;
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+
+      if(isDisabled){
+        e.preventDefault();
+      }
+
+    }
  
 
     return(
@@ -76,10 +86,10 @@ export default function Sale(){
                             </div>
                         </div>
                         <div className="flex justify-end mt-auto p-2 border-t">                   
-                            <button disabled={saleItems.length === 0} className="flex items-center gap-1 border rounded px-2 py-1 bg-green-500 font-bold text-white disabled:bg-zinc-400 disabled:text-zinc-100" type="button">
+                            <a href="/payments" onClick={handleClick} className={`flex items-center gap-1 border rounded px-2 py-1 font-bold ${isDisabled ? 'bg-zinc-400 text-zinc-100' : ' bg-green-500 text-white '}`} type="button">
                                 <FontAwesomeIcon icon={faWallet}/>
                                 Pagar
-                            </button>
+                            </a>
                         </div>
                         
                     </main> 
