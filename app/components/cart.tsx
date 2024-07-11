@@ -4,7 +4,11 @@ import CartItem from './cart-item';
 import CurrencyFormatter from './currency-formatter';
 import { useSaleItemStore } from '../lib/zustand';
 
-export default function Cart(){
+interface CartProps {
+    disableRemove:boolean
+}
+
+export default function Cart(props: CartProps){
 
     const {saleItems} = useSaleItemStore();
 
@@ -21,7 +25,7 @@ export default function Cart(){
             </div>
             <div className="flex flex-1 flex-col">
                 {saleItems.map((saleItem)=>(
-                    <CartItem key={saleItem.product.id} id={saleItem.product.id} name={saleItem.product.name} quantity={saleItem.quantity} unitPrice={saleItem.product.price}/>
+                    <CartItem key={saleItem.product.id} id={saleItem.product.id} name={saleItem.product.name} quantity={saleItem.quantity} unitPrice={saleItem.product.price} disableRemove={props.disableRemove}/>
                 ))}                        
             </div>
             <div className="flex justify-between border-t p-2">

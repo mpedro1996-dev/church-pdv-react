@@ -69,7 +69,7 @@ export default function Sale(){
                 <Navbar/>
                 <div className="flex flex-1">            
                     <aside className="w-72 flex flex-col border rounded m-1">
-                    <Cart/>
+                    <Cart disableRemove={false}/>
                     </aside>
                     <main className="flex-1 flex flex-col border rounded m-1">
                         
