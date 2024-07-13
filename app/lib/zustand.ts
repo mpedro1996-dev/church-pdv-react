@@ -1,5 +1,6 @@
 import { create }  from 'zustand';
 import { persist } from 'zustand/middleware';
+import PaymentType from '../components/payment-type-button';
 
 interface TokenState {  
   token: string | null;
@@ -114,4 +115,25 @@ const useSaleStore = create<SaleState>((set) => ({
   })
 )
 
-export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore};
+interface PaymentTypeState{
+  paymentType:number | null,
+  setPaymentType: (paymentType:number | null) => void;
+}
+
+const usePaymentTypeStore = create<PaymentTypeState>((set) => ({
+  paymentType: null,
+  setPaymentType: (paymentType) => set({paymentType: paymentType})
+}))
+
+
+interface PayValueState{
+  payValue:number,
+  setPayValue:(payValue:number) => void
+}
+
+const usePayValueStore = create<PayValueState>((set) => ({
+  payValue:0,
+  setPayValue: (payValue) => set({payValue: payValue})
+}))
+
+export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore};
