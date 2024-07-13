@@ -21,8 +21,7 @@ export default function CurrencyInput(props:CurrencyInputProps){
   
     };
 
-    const formatValue = () => {  
-      let value = payValue / 100
+    const formatValue = () => {      
       let formattedValue = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',

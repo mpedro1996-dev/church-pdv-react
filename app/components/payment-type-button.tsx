@@ -20,6 +20,6 @@ export default function PaymentType(props:PaymentTypeProps){
 
 
     return(
-        <button disabled={isPaymentTypeSelected()} {...props} className={`${props.className} border rounded p-2 w-full disabled:border-zinc-400 disabled:bg-zinc-400 disabled:text-zinc-200`} onClick={() => HandleClickPaymentType()}>{props.children}</button>
+        <button disabled={isPaymentTypeSelected() || props.disabled} {...props} className={`${props.className} border rounded p-2 w-full disabled:border-zinc-400 disabled:bg-zinc-400 disabled:text-zinc-200`} onClick={() => HandleClickPaymentType()}>{props.children}</button>
     )
 }

@@ -9,8 +9,10 @@ import { faCreditCard as farCreditCard } from "@fortawesome/free-regular-svg-ico
 import CurrencyInput from "../components/currency-input"
 import CurrencyFormatter from "../components/currency-formatter"
 import PaymentType from "../components/payment-type-button"
-import { usePaymentTypeStore, usePayValueStore } from "../lib/zustand"
+import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore } from "../lib/zustand"
 import { useEffect, useState } from "react"
+import { v4 as uuidv4 } from 'uuid';
+import PaymentItem from "../components/payment-item"
 
 
 export default function Payment(){
@@ -18,9 +20,12 @@ export default function Payment(){
     const {paymentType, setPaymentType} = usePaymentTypeStore();
     const {payValue, setPayValue} = usePayValueStore();  
     const [isWithoutPaymentType, setIsWithoutPaymentType] = useState(true);
+    const [hasChangeValue, setHasChangeValue] = useState(false);
+    const {saleItems} = useSaleItemStore();
+    const { payments, setPayments, addPayment} = usePaymentStore()
+    const [remainValue, setRemainValue] = useState(0); 
+    const [changeValue, setChangeValue] = useState(0);
 
-
-    
     useEffect(() => {
         if (paymentType === null) {          
             setIsWithoutPaymentType(true);
@@ -28,11 +33,104 @@ export default function Payment(){
             setIsWithoutPaymentType(false);
         }
       }, [paymentType]);
+
+    useEffect(() => {
+        const calculateTotal = () => {
+            return saleItems.reduce((total, item) => {
+              return total + item.quantity * item.product.price;
+            }, 0);
+          };
+    
+        const calculatePayments = () => {
+            return payments.reduce((total, payment) => {
+                return total + payment.value;
+              }, 0);
+        }
+    
+        const total = calculateTotal();
+        const paymentsTotal = calculatePayments();
+        let remainValue = total - paymentsTotal;
+
+        if(remainValue < 0 ){
+            remainValue = 0
+        }
+
+        setRemainValue(remainValue);
+
+    }, [saleItems,payments])
     
     const removePaymentType = () =>{
         setPaymentType(null);
         setPayValue(0)
     }
+
+    const calculateTotal = () => {
+        return saleItems.reduce((total, item) => {
+          return total + item.quantity * item.product.price;
+        }, 0);
+      };
+
+    const calculatePayments = () => {
+        return payments.reduce((total, payment) => {
+            return total + payment.value;
+          }, 0);
+    }
+
+    const hasCompletedSale = () =>{
+        return remainValue === 0;
+    }
+
+    const pay = () =>{
+
+        if(payValue === 0) return;
+
+        let remainValue = calculateTotal() - calculatePayments(); 
+        let changeValue = 0;     
+        setHasChangeValue(false);
+        
+        if(remainValue <= 0){
+            return;
+        }
+
+        if(paymentType !== 1 && payValue > remainValue)
+        {
+            alert("Essa forma de pagamento não permite troco");
+            return;            
+        }
+
+        if(payValue > remainValue){
+            setHasChangeValue(true);           
+        }
+
+        changeValue = payValue-remainValue;
+        setChangeValue(changeValue);        
+        createPayment(changeValue);
+        setRemainValue(remainValue);
+        setPayValue(0);
+        setPaymentType(null);          
+
+    }
+
+    const giveChangeValueBack = () =>{
+
+        if(!hasChangeValue) return;
+
+        setHasChangeValue(false);
+        setChangeValue(0);
+
+
+    }
+
+    const createPayment = (changeValue: number | null) =>{
+        addPayment({
+            changeValue: changeValue,
+            paymentType: paymentType,
+            value: payValue,
+            guid: uuidv4()
+        });
+    }
+
+    
 
 
 
@@ -47,12 +145,11 @@ export default function Payment(){
                     <div className="flex flex-col p-2">
                         <h2>Formas de pagamentos:</h2>
                         <div className="flex items-start mt-1 gap-3">
-                            <PaymentType paymenttype={1} className="bg-green-700 text-white border-green-500 hover:bg-green-400"><FontAwesomeIcon icon={faMoneyBill}/> Dinheiro</PaymentType>
-                            <PaymentType paymenttype={2} className="bg-zinc-500 text-white border-zinc-900 hover:bg-zinc-300"><FontAwesomeIcon icon={farCreditCard}/> Débito</PaymentType>
-                            <PaymentType paymenttype={3} className="bg-blue-800 text-white border-blue-500 hover:bg-blue-500"><FontAwesomeIcon icon={faCreditCard}/> Crédito</PaymentType>
-                            <PaymentType paymenttype={4} className="bg-green-900 text-white border-green-500 hover:bg-green-700"><FontAwesomeIcon icon={faPix}/> Pix</PaymentType>
-                            <PaymentType paymenttype={5} className="bg-red-600 text-white border-red-500 hover:bg-red-300"><FontAwesomeIcon icon={faAddressCard}/> Pós-pago/fiado</PaymentType>
-                        
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={1} className="bg-green-700 text-white border-green-500 hover:bg-green-400"><FontAwesomeIcon icon={faMoneyBill}/> Dinheiro</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={2} className="bg-cyan-600 text-white border-cyan-300 hover:bg-zinc-300"><FontAwesomeIcon icon={farCreditCard}/> Débito</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={3} className="bg-blue-800 text-white border-blue-500 hover:bg-blue-500"><FontAwesomeIcon icon={faCreditCard}/> Crédito</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={4} className="bg-green-900 text-white border-green-500 hover:bg-green-700"><FontAwesomeIcon icon={faPix}/> Pix</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={5} className="bg-red-600 text-white border-red-500 hover:bg-red-300"><FontAwesomeIcon icon={faAddressCard}/> Pós-pago/fiado</PaymentType>
                         </div>
                     </div>
                     <div className="flex items-start p-2 gap-2">
@@ -63,20 +160,24 @@ export default function Payment(){
                         <div className="flex flex-col">
                             <label>Troco:</label>
                             <div className="rounded border border-zinc-400 shadow-sm h-10 p-2 w-36 text-zinc-400">
-                                <CurrencyFormatter value={0}/>
+                                <CurrencyFormatter value={changeValue}/>
                             </div>                            
                         </div>                        
                         <div className="flex flex-col">
                             <label>Restam:</label>
                             <div className="rounded border border-zinc-400 shadow-sm h-10 p-2 w-36 text-zinc-400">
-                                <CurrencyFormatter value={7.0}/>
+                                <CurrencyFormatter value={remainValue}/>
                             </div>
                         </div>                      
                         <div className="flex flex-col h-full">
-                            <button type="button" disabled={isWithoutPaymentType} className="flex items-center border rounded p-2 h-10 w-full mt-auto gap-1 bg-blue-700 border-blue-400 hover:bg-blue-300 text-white disabled:bg-zinc-400"><FontAwesomeIcon icon={faWallet}/>Pagar</button>
+                            {hasChangeValue 
+                            ?(<button type="button" disabled={!hasChangeValue} className="flex items-center border rounded p-2 h-10 w-full mt-auto gap-1 bg-green-700 border-green-400 hover:bg-blue-300 text-white disabled:bg-zinc-400" onClick={() => giveChangeValueBack()}><FontAwesomeIcon icon={faHandHoldingDollar}/>Confirmar troco</button> )
+                            :(<button type="button" disabled={isWithoutPaymentType || hasChangeValue || hasCompletedSale()} className="flex items-center border rounded p-2 h-10 w-full mt-auto gap-1 bg-blue-700 border-blue-400 hover:bg-blue-300 text-white disabled:bg-zinc-400" onClick={() => pay()}><FontAwesomeIcon icon={faWallet}/>Pagar</button>)
+                            }
+                            
                         </div>
                         <div className="flex flex-col h-full">
-                            <button type="button" className="flex items-center border rounded p-2 h-10 w-full mt-auto gap-1 bg-zinc-400 border-zinc-700 hover:bg-zinc-200 text-white" onClick={() => removePaymentType()}><FontAwesomeIcon icon={faXmark}/>Remover seleção</button>
+                            <button type="button" disabled={hasChangeValue} className="flex items-center border rounded p-2 h-10 w-full mt-auto gap-1 bg-zinc-400 border-zinc-700 hover:bg-zinc-200 text-white" onClick={() => removePaymentType()}><FontAwesomeIcon icon={faXmark}/>Remover seleção</button>
                         </div>                     
                     </div>    
                     <div className="flex flex-col border-t mt-6">
@@ -93,35 +194,27 @@ export default function Payment(){
                                     Valor
                                 </div>
                                 <div className="flex flex-1">
+                                    Troco
+                                </div>
+                                <div className="flex flex-1">
                                     Membro
                                 </div>
                                 <div className="flex flex-1">
                                 <FontAwesomeIcon icon={faGears}/>
                                 </div>
                             </div>                                                                
-                        </div>  
-                        <div className="border-b">
-                            <div className="flex items-center justify-between p-2">
-                                <div className="flex flex-1 items-center gap-1 ">
-                                    <FontAwesomeIcon icon={faPix}/> Pix
-                                </div>
-                                <div className="flex flex-1">
-                                    <CurrencyFormatter value={7.0}/>
-                                </div>
-                                <div className="flex flex-1">
-                                    -
-                                </div>
-                                <div className="flex flex-1">
-                                    <FontAwesomeIcon icon={faTrash}/>
-                                </div>
-                            </div>
-                        </div>
+                        </div> 
+
+                        {payments.map((payment)=>( 
+                            <PaymentItem key={payment.guid} guid={payment.guid} paymentType={payment.paymentType} value={payment.value} changeValue={payment.changeValue} /> 
+                        ))} 
+                        
                      </div>
                      <div className="flex justify-end mt-auto p-2 border-t">                   
-                            <a href="/payments" className={`flex items-center gap-1 border rounded px-2 py-1 font-bold`} type="button">
+                            <button disabled={!hasCompletedSale()} className={`flex items-center gap-1 border rounded px-2 py-1 font-bold`} type="button">
                                 <FontAwesomeIcon icon={faFlagCheckered}/>
                                 Finalizar venda
-                            </a>
+                            </button>
                         </div>
                 </main>
             </div>

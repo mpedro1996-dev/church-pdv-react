@@ -90,9 +90,35 @@ const useSaleItemStore = create(
 );
 
 interface Payment{
+  changeValue: number | null;
   value: number;
-  paymentType: number;
+  paymentType: number | null;
+  guid: string
 }
+
+interface PaymentState {
+  payments: Payment[];
+  setPayments: (payments: Payment[]) => void;
+  addPayment: (payment: Payment) => void;
+  removePayment: (guid: string) => void;
+}
+
+const usePaymentStore = create(
+  persist<PaymentState>(
+    (set) => ({
+      payments: [],
+      setPayments: (payments:Payment[]) => set({ payments }),
+      addPayment: (payment:Payment) => set((state) => ({ payments: [...state.payments, payment] })),
+      removePayment: (guid:string) => set((state) => ({
+        payments: state.payments.filter((payment) => payment.guid !== guid)
+      }))      
+    }),
+    {
+      name: 'payment-storage', // Nome usado para armazenar no localStorage
+    }
+  )
+);
+
 
 interface Sale{
   saleItens: SaleItem[]; 
@@ -136,4 +162,4 @@ const usePayValueStore = create<PayValueState>((set) => ({
   setPayValue: (payValue) => set({payValue: payValue})
 }))
 
-export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore};
+export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore};
