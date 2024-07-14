@@ -2,11 +2,13 @@
 import { FieldErrors, useForm } from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {api} from './lib/axios';
+import {api, registerLoadingIndicator} from './lib/axios';
 import Input  from './components/input';
 import ValidatorMessage from './components/validator-message';
 import {useTokenStore} from './lib/zustand';
 import { useRouter } from 'next/navigation';
+import Loading from './components/loading';
+import { useEffect, useState } from 'react';
 
 
 const loginSchema = z.object({   
@@ -23,7 +25,13 @@ export default function Login() {
     });
 
     const { setToken} = useTokenStore();
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        // Registrar a função setLoading no interceptor
+        registerLoadingIndicator(setLoading);
+    }, []);
 
     async function login (data:LoginFormData){
         try
@@ -45,8 +53,12 @@ export default function Login() {
     
     }
     
-    return (  
-      <div className="flex justify-center items-center h-screen">        
+    return (
+      <>
+      {loading && <Loading message={"Autenticando..."}/>}
+        
+        
+      <div className="flex justify-center items-center h-screen">             
 
         <div className="bg-white p-8 rounded shadow-lg space-y-3">
             <h1>Login</h1>        
@@ -68,5 +80,6 @@ export default function Login() {
 
 
       </div>
+      </>
     );
   }
