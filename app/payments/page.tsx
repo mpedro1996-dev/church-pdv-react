@@ -274,7 +274,7 @@ export default function Payment(){
                                 <div className="flex flex-1">
                                     Membro
                                 </div>
-                                <div className="flex flex-1">
+                                <div className="flex flex-1 text-center">
                                 <FontAwesomeIcon icon={faGears}/>
                                 </div>
                             </div>                                                                

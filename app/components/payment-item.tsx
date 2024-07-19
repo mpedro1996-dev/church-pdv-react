@@ -57,7 +57,7 @@ export default function PaymentItem(props:PaymentItemProps){
                 <div className="flex flex-1">
                     -
                 </div>
-                <div className="flex flex-1">
+                <div className="flex flex-1 text-center">
                     <button className="hover:text-red-600" type="button" onClick={() => handleRemove()}><FontAwesomeIcon icon={faTrash}/></button>
                 </div>
             </div>
