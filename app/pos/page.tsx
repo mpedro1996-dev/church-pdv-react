@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 import {useProductStore, useSaleItemStore, useTokenStore} from "../lib/zustand"
 import { useEffect, useState } from "react";
-import {api} from '../lib/axios';
-import { useRouter } from 'next/navigation';
+import {api, registerLoadingIndicator} from '../lib/axios';
+import Loading from "../components/loading";
 
 export default function Sale(){    
       
@@ -18,7 +18,12 @@ export default function Sale(){
     const { products, setProducts } = useProductStore();
     const {saleItems} = useSaleItemStore();
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(true);
   
+    useEffect(() => {
+      registerLoadingIndicator(setLoading);
+    },[]);
+
     useEffect(() => {
       async function GetProducts() {
 
@@ -64,7 +69,8 @@ export default function Sale(){
  
 
     return(
-        <>        
+        <>  
+            {loading && <Loading  message="Carregando..."/>}
             <div className="flex flex-col h-screen">
                 <Navbar/>
                 <div className="flex flex-1">            

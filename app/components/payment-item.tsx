@@ -9,6 +9,7 @@ interface PaymentItemProps {
     paymentType: number | null,
     value: number,
     changeValue: number | null,
+    receivedValue: number
     guid: string
 }
 
@@ -48,7 +49,7 @@ export default function PaymentItem(props:PaymentItemProps){
                     {getPaymentType()}
                 </div>
                 <div className="flex flex-1">
-                    <CurrencyFormatter value={props.value}/>
+                    <CurrencyFormatter value={props.receivedValue}/>
                 </div>
                 <div className="flex flex-1">
                     {props.changeValue ? <CurrencyFormatter value={props.changeValue}/> : "-"}            

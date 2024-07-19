@@ -90,6 +90,7 @@ const useSaleItemStore = create(
 );
 
 interface Payment{
+  receivedValue: number;
   changeValue: number | null;
   value: number;
   paymentType: number | null;

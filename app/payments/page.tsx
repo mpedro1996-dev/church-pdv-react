@@ -9,10 +9,15 @@ import { faCreditCard as farCreditCard } from "@fortawesome/free-regular-svg-ico
 import CurrencyInput from "../components/currency-input"
 import CurrencyFormatter from "../components/currency-formatter"
 import PaymentType from "../components/payment-type-button"
-import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore } from "../lib/zustand"
+import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore } from "../lib/zustand"
 import { useEffect, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import PaymentItem from "../components/payment-item"
+import { api, registerLoadingIndicator } from "../lib/axios"
+import Loading from "../components/loading"
+import SaleSucess from "../components/sale-success"
+import { useRouter } from 'next/navigation';
+
 
 
 export default function Payment(){
@@ -21,10 +26,18 @@ export default function Payment(){
     const {payValue, setPayValue} = usePayValueStore();  
     const [isWithoutPaymentType, setIsWithoutPaymentType] = useState(true);
     const [hasChangeValue, setHasChangeValue] = useState(false);
-    const {saleItems} = useSaleItemStore();
+    const {saleItems, setSaleItems} = useSaleItemStore();
     const { payments, setPayments, addPayment} = usePaymentStore()
     const [remainValue, setRemainValue] = useState(0); 
     const [changeValue, setChangeValue] = useState(0);
+    const {token} = useTokenStore();
+    const [loading, setLoading] = useState(false);
+    const [saleSuccessing, setSaleSuccessing] = useState(false);
+    const router = useRouter()
+    
+    useEffect(()=>{
+        registerLoadingIndicator(setLoading)
+    },[]);
 
     useEffect(() => {
         if (paymentType === null) {          
@@ -82,9 +95,15 @@ export default function Payment(){
 
     const pay = () =>{
 
-        if(payValue === 0) return;
+        let receivedValue = payValue;
 
         let remainValue = calculateTotal() - calculatePayments(); 
+
+        if(receivedValue === 0)
+        {
+            receivedValue = remainValue;
+        }
+
         let changeValue = 0;     
         setHasChangeValue(false);
         
@@ -92,19 +111,19 @@ export default function Payment(){
             return;
         }
 
-        if(paymentType !== 1 && payValue > remainValue)
+        if(paymentType !== 1 && receivedValue > remainValue)
         {
             alert("Essa forma de pagamento não permite troco");
             return;            
         }
 
-        if(payValue > remainValue){
-            setHasChangeValue(true);           
+        if(receivedValue > remainValue){
+            changeValue = receivedValue-remainValue;
+            setHasChangeValue(true);
         }
 
-        changeValue = payValue-remainValue;
         setChangeValue(changeValue);        
-        createPayment(changeValue);
+        createPayment(receivedValue,changeValue);
         setRemainValue(remainValue);
         setPayValue(0);
         setPaymentType(null);          
@@ -121,13 +140,66 @@ export default function Payment(){
 
     }
 
-    const createPayment = (changeValue: number | null) =>{
+    const createPayment = (receivedValue: number,changeValue: number | null) =>{
+        let value = 0;
+
+        if(changeValue !== null){
+
+            value = receivedValue - changeValue;
+
+        }
+
         addPayment({
+            receivedValue: receivedValue,
             changeValue: changeValue,
             paymentType: paymentType,
-            value: payValue,
+            value: value,
             guid: uuidv4()
         });
+    }
+
+    function delay(ms:number){
+        return new Promise(resolve => setTimeout(resolve,ms));
+    }
+
+    async function finishSale(){  
+        
+        if(hasChangeValue) return;
+
+        try
+        {
+            const data = {
+                "saleItems": saleItems.map((saleItem) =>({"productId": saleItem.product.id, "price": saleItem.product.price, "quantity": saleItem.quantity})),
+                "payments": payments.map((payment) => ({"paymentType": payment.paymentType, "value": payment.value }))
+            };
+
+            const response = await api.post("/api/sales",
+                data,
+                {
+                    headers:{
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const result = response.data;
+
+            if(result.isSuccess){
+                setSaleItems([]);
+                setPayments([]);
+                setSaleSuccessing(true);
+                await delay(3000);
+                router.push("/pos");
+            }
+
+        }
+        catch(error)
+        {
+            console.error(error);
+
+        }
+
+        
     }
 
     
@@ -135,6 +207,9 @@ export default function Payment(){
 
 
     return(
+        <>
+        {loading && <Loading message="Finalizando venda ..."/>}
+        {saleSuccessing && <SaleSucess message="Venda finalizada!"/>}
         <div className="flex flex-col h-screen">
             <Navbar/>
             <div className="flex flex-1">
@@ -206,12 +281,12 @@ export default function Payment(){
                         </div> 
 
                         {payments.map((payment)=>( 
-                            <PaymentItem key={payment.guid} guid={payment.guid} paymentType={payment.paymentType} value={payment.value} changeValue={payment.changeValue} /> 
+                            <PaymentItem key={payment.guid} guid={payment.guid} paymentType={payment.paymentType} value={payment.value} changeValue={payment.changeValue} receivedValue={payment.receivedValue} /> 
                         ))} 
                         
                      </div>
                      <div className="flex justify-end mt-auto p-2 border-t">                   
-                            <button disabled={!hasCompletedSale()} className={`flex items-center gap-1 border rounded px-2 py-1 font-bold`} type="button">
+                            <button disabled={!hasCompletedSale()} className={`flex items-center gap-1 border rounded px-2 py-1 font-bold`} type="button" onClick={() => finishSale()}>
                                 <FontAwesomeIcon icon={faFlagCheckered}/>
                                 Finalizar venda
                             </button>
@@ -219,7 +294,7 @@ export default function Payment(){
                 </main>
             </div>
         </div>
-
+        </>
     )
 
 

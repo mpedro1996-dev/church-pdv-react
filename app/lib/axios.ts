@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { date } from 'zod';
 
 export const api = axios.create({
     baseURL:'http://localhost:5091',
@@ -42,6 +43,8 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+
 
 // Funções para mostrar e esconder o indicador de carregamento
 const showLoadingIndicator = () => {
