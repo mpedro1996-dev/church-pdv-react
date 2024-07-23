@@ -163,4 +163,39 @@ const usePayValueStore = create<PayValueState>((set) => ({
   setPayValue: (payValue) => set({payValue: payValue})
 }))
 
-export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore};
+interface Ministry{
+  id: number,
+  name: string,
+  acronym: string
+}
+
+interface MinistryState{
+  ministries:Ministry[]
+  setMinistries:(ministries:Ministry[]) => void
+}
+
+const useMinistryStore = create<MinistryState>((set)=>({
+  ministries:[],
+  setMinistries:(ministries) => set({ministries: ministries}) 
+}))
+
+
+interface Courtesy{
+  id: number,
+  ministry: string,
+  product:string,
+  quantity: number,
+  creationDate: string
+}
+
+interface CourtesyState{
+  courtesies: Courtesy[],
+  setCourtesies: (courtesies:Courtesy[]) => void 
+}
+
+const useCourtesyStore = create<CourtesyState>((set) => ({
+  courtesies:[],
+  setCourtesies:(courtesies)=>set({courtesies:courtesies})
+}))
+
+export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore, useMinistryStore, useCourtesyStore};

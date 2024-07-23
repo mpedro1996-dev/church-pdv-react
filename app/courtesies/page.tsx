@@ -8,6 +8,8 @@ import Product from "../components/product";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import NewCourtesy from "../components/new-courtesy";
 import { useEffect, useState } from "react";
+import { useCourtesyStore, useTokenStore } from "../lib/zustand";
+import { api } from "../lib/axios";
 
 interface Courtesy {
     ministry: string,
@@ -19,6 +21,8 @@ interface Courtesy {
 export default function Courtesies(){
 
     const [modalOpen, setModalOpen] = useState(false);
+    const {token} = useTokenStore();
+    const {courtesies, setCourtesies} = useCourtesyStore();
 
     const openModal = () => setModalOpen(true);
     
@@ -30,11 +34,34 @@ export default function Courtesies(){
         "Produto",
         "Quantidade"
     ];
-
-    const data = [
-        {ministry: "MKG", product: "Pizza-frita + refri", quantity: 2},
-        {ministry: "MAC", product: "Pizza-frita + refri", quantity: 3}
-    ]
+    
+    useEffect(() => {
+        async function GetMinistries() {
+  
+          if (!token) {
+            console.error('No token found');
+            return;
+          }
+    
+          try {
+            const response = await api.get('/api/courtesies', {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+    
+            const result = response.data;
+              
+            if (result.isSuccess) {
+                setCourtesies(result.value);
+            }
+          } catch (error) {
+            console.error('GetMinistries failed!', error);
+          }
+        }
+    
+        GetMinistries();
+      }, [token, setCourtesies]);
 
 
     return (
@@ -50,7 +77,7 @@ export default function Courtesies(){
 
                     <div className="flex flex-col border rounded">
                         <FlexTableHeaders headers={headers}/>                        
-                        {data.map((courtesy, index) => (<FlexTableRow isLast={(index+1) == data.length} key={index} cells={[courtesy.ministry,courtesy.product,courtesy.quantity+""]}/>))}
+                        {courtesies.map((courtesy, index) => (<FlexTableRow isLast={(index+1) == courtesies.length} key={index} cells={[courtesy.ministry,courtesy.product,courtesy.quantity+""]}/>))}
                         
                     
                     </div>
