@@ -10,6 +10,7 @@ import NewCourtesy from "../components/new-courtesy";
 import { useEffect, useState } from "react";
 import { useCourtesyStore, useTokenStore } from "../lib/zustand";
 import { api } from "../lib/axios";
+import CourtesyRow from "../components/courtesy-row";
 
 interface Courtesy {
     ministry: string,
@@ -30,9 +31,11 @@ export default function Courtesies(){
 
 
     const headers = [
+        "Lote",
         "Ministério",
         "Produto",
-        "Quantidade"
+        "Quantidade",
+        "Data"
     ];
     
     useEffect(() => {
@@ -64,22 +67,23 @@ export default function Courtesies(){
       }, [token, setCourtesies]);
 
 
+
+
     return (
     <>  
         {modalOpen && <NewCourtesy closeModal={closeModal}/>}      
         <div className="flex flex-col h-screen">
             <Navbar/>
             <div className="flex flex-row w-full items-start justify-center">       
-                <div className="w-6/12 p-2">
+                <div className="w-8/12 p-2">
                     <div className="flex flex-row-reverse mb-2">
                         <button type="button" className="text-white bg-green-600 border rounded border-green-400 p-2 flex items-center gap-1" onClick={openModal}><FontAwesomeIcon icon={faPlus}/>Emitir cortesias</button>
                     </div>
 
                     <div className="flex flex-col border rounded">
-                        <FlexTableHeaders headers={headers}/>                        
-                        {courtesies.map((courtesy, index) => (<FlexTableRow isLast={(index+1) == courtesies.length} key={index} cells={[courtesy.ministry,courtesy.product,courtesy.quantity+""]}/>))}
-                        
-                    
+                        <FlexTableHeaders headers={headers} hasActionButton={true}/>                        
+                        {courtesies.map((courtesy) => (<CourtesyRow key={courtesy.id} id={courtesy.id} ministry={courtesy.ministry} product={courtesy.product} quantity={courtesy.quantity}
+                        creationDate={courtesy.creationDate}/>))}                      
                     </div>
                 </div>
             </div>

@@ -185,7 +185,7 @@ interface Courtesy{
   ministry: string,
   product:string,
   quantity: number,
-  creationDate: string
+  creationDate: Date
 }
 
 interface CourtesyState{

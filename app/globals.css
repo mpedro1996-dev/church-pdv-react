@@ -3,3 +3,21 @@
 @tailwind utilities;
 
 
+@media print{
+    @page {
+        size: 58mm 210mm; /* Define o tamanho da página para 58mm de largura e 210mm de altura */
+        margin: 0;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    
+      .print-area {
+        width: 58mm;
+        height: 210mm;
+        margin: 0;
+        padding: 0;
+      }
+}
