@@ -10,13 +10,15 @@ import CurrencyInput from "../components/currency-input"
 import CurrencyFormatter from "../components/currency-formatter"
 import PaymentType from "../components/payment-type-button"
 import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore } from "../lib/zustand"
-import { useEffect, useState } from "react"
+import { useEffect, useImperativeHandle, useRef, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import PaymentItem from "../components/payment-item"
 import { api, registerLoadingIndicator } from "../lib/axios"
 import Loading from "../components/loading"
 import SaleSucess from "../components/sale-success"
 import { useRouter } from 'next/navigation';
+import PrintableSale from "../components/printable-sale"
+import { useReactToPrint } from "react-to-print"
 
 
 
@@ -33,7 +35,26 @@ export default function Payment(){
     const {token} = useTokenStore();
     const [loading, setLoading] = useState(false);
     const [saleSuccessing, setSaleSuccessing] = useState(false);
-    const router = useRouter()
+    const router = useRouter();
+
+    const[saleData, setSaleData] = useState(null);
+
+    const componentRef = useRef<HTMLDivElement | null>(null);
+
+    
+    const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: 'Relatório de Impressão',
+    onBeforeGetContent: () => {
+        if (componentRef.current) {
+         componentRef.current.style.width = '58mm';
+        }
+        return Promise.resolve();
+    },
+    onAfterPrint:() =>{
+        router.push("/pos");
+    }
+    });
     
     useEffect(()=>{
         registerLoadingIndicator(setLoading)
@@ -185,11 +206,16 @@ export default function Payment(){
             const result = response.data;
 
             if(result.isSuccess){
+                setSaleData(result.value);  
                 setSaleItems([]);
-                setPayments([]);
+                setPayments([]);               
                 setSaleSuccessing(true);
                 await delay(3000);
-                router.push("/pos");
+
+                if(componentRef.current){
+                    handlePrint();
+                }
+                
             }
 
         }
@@ -210,6 +236,11 @@ export default function Payment(){
         <>
         {loading && <Loading message="Finalizando venda ..."/>}
         {saleSuccessing && <SaleSucess message="Venda finalizada!"/>}
+        <div className="hidden">
+            <div ref={componentRef}>
+                <PrintableSale sale={saleData}/>
+            </div>
+        </div>
         <div className="flex flex-col h-screen">
             <Navbar/>
             <div className="flex flex-1">
