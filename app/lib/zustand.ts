@@ -219,4 +219,22 @@ const useCourtesyStore = create<CourtesyState>((set) => ({
   setCourtesies:(courtesies)=>set({courtesies:courtesies})
 }))
 
-export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore, useMinistryStore, useCourtesyStore, useMemberStore};
+
+interface CashFlow{
+  value: number,
+  paymentType: number | null,
+  type: number,
+  description: string
+}
+
+interface CashFlowState{
+  cashFlows:CashFlow[],
+  setCashFlows: (cashFlows: CashFlow[]) => void;
+}
+
+const useCashFlowStore = create<CashFlowState>((set) => ({
+  cashFlows:[],
+  setCashFlows:(cashFlows)=>set({cashFlows:cashFlows})
+}))
+
+export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore, useMinistryStore, useCourtesyStore, useMemberStore, useCashFlowStore};

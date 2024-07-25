@@ -39,7 +39,7 @@ export default function Courtesies(){
     ];
     
     useEffect(() => {
-        async function GetMinistries() {
+        async function GetCourtesies() {
   
           if (!token) {
             console.error('No token found');
@@ -59,11 +59,11 @@ export default function Courtesies(){
                 setCourtesies(result.value);
             }
           } catch (error) {
-            console.error('GetMinistries failed!', error);
+            console.error('GetCourtesies failed!', error);
           }
         }
     
-        GetMinistries();
+        GetCourtesies();
       }, [token, setCourtesies]);
 
 
