@@ -4,56 +4,76 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Navbar from "../components/navbar"
 import { faLock, faPlus } from "@fortawesome/free-solid-svg-icons"
 import CurrencyInput from "../components/currency-input"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { api, registerLoadingIndicator } from "../lib/axios"
-import { useCashFlowStore, useTokenStore } from "../lib/zustand"
+import { useCashFlowStore, usePayValueStore, useTokenStore } from "../lib/zustand"
 import CashFlowRow from "../components/cash-flow-row"
 import Loading from "../components/loading"
 import CurrencyFormatter from "../components/currency-formatter"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import Input from "../components/input"
+import ValidatorMessage from "../components/validator-message"
+
+const cashFlowSchema = z.object({   
+    description: z.string().min(3, "Informe a descrição do movimento"),
+    type: z.number()
+});
+
+type CashFlowFormData = z.infer<typeof cashFlowSchema>
 
 export default function CashFlows(){
 
     const { token } = useTokenStore();
     const { cashFlows, setCashFlows} = useCashFlowStore();
     const [loading, setLoading] = useState(false);
+    const [loadingPage, setLoadingPage] = useState(true);
+    const {payValue, setPayValue} = usePayValueStore();
+    const [description, setDescription] = useState("");
 
     useEffect(() => {
         // Registrar a função setLoading no interceptor
         registerLoadingIndicator(setLoading);
+        setLoadingPage(false);
     }, []);
+
+    const { handleSubmit , register, formState:{errors}} = useForm<CashFlowFormData>({       
+        resolver:zodResolver(cashFlowSchema)
+    });
+
+    const GetCashFlows = useCallback(async() => {
+  
+        if (!token) {
+          console.error('No token found');
+          return;
+        }
+  
+        try {
+          const response = await api.get('/api/cash-flows', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          const result = response.data;
+
+            
+          if (result.isSuccess) {
+              setCashFlows(result.value);            
+          }
+        } catch (error) {
+          console.error('GetCashFlows failed!', error);
+        }
+      },[token,setCashFlows])
+
 
 
     useEffect(() => {
-        async function GetCashFlows() {
-  
-          if (!token) {
-            console.error('No token found');
-            return;
-          }
-    
-          try {
-            const response = await api.get('/api/cash-flows', {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-    
-            const result = response.data;
-
-              
-            if (result.isSuccess) {
-                setCashFlows(result.value);
-                console.log(result.value);
-              
-            }
-          } catch (error) {
-            console.error('GetCashFlows failed!', error);
-          }
-        }
-
+       
         GetCashFlows();
     
-      }, [token, setCashFlows]);
+    }, [GetCashFlows]);
 
 
 
@@ -136,37 +156,75 @@ export default function CashFlows(){
           }, 0);
       }
 
+      async function createCashFlow(data:CashFlowFormData){
+
+        if(payValue <= 0){
+            alert('Informe um valor maior que zero.',);
+        }
+
+        try
+        {            
+            const response = await api.post('/api/cash-flows', {...data,"cashFlowValue":payValue},
+                {
+                    headers:{
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );            
+            const result = response.data;
+
+            if(result.isSuccess)
+            {                
+                setPayValue(0)
+                GetCashFlows();
+                setDescription("");
+            }        
+        }
+        catch(error)
+        {
+            console.error('Login failed', error);
+        }
+      }
+
+
+      const handleDescriptionChange = (event : React.ChangeEvent<HTMLInputElement>) => {
+        setDescription(event.target.value);
+      };
+
 
 
 
     return(
         <>
+        {loadingPage && <Loading message={"Carregando..."}/>}
         {loading && <Loading message={"Carregando..."}/>}
 
         <div className="flex flex-col h-screen">
             <Navbar/>
             <div className="flex flex-row w-full items-start justify-center">       
                 <div className="w-8/12 p-2">
-                    <div className="flex flex-row gap-2 mb-2">
+                    <form className="flex flex-row gap-2 mb-2" onSubmit={handleSubmit(createCashFlow)}>
                         <div className="flex flex-col">
-                        <label>Tipo:</label>
-                        <select className="rounded border border-zinc-400 shadow-sm w-full h-10 px-2" >
-                            <option value="0">Suplemento</option>
-                            <option value="1">Sangria</option>
-                        </select>
+                            <label>Tipo:</label>
+                            <select {...register("type", {valueAsNumber: true})}className="rounded border border-zinc-400 shadow-sm w-full h-10 px-2" >
+                                <option value="0">Suplemento</option>
+                                <option value="1">Sangria</option>
+                            </select>
                         </div>
                         <div className="flex flex-col">
                             <label>Valor:</label>
                             <CurrencyInput className="w-36 disabled:bg-zinc-300 disabled:text-zinc-400" name="openValue" />
                         </div>
-                        <div>
+                        <div className="flex flex-col">
                             <label>Descrição:</label>
-                            <input className="rounded border border-zinc-400 shadow-sm w-full h-10 px-2" type="text" />
+                            <Input register={register("description")} type="text" name="description" onChange={handleDescriptionChange} value={description} />
+                            {errors.description && <ValidatorMessage>{errors.description.message}</ValidatorMessage>}
+
                         </div>
-                        <div className="flex items-end">
-                            <button type="button" className="text-white bg-green-600 border rounded border-green-400 p-2 flex items-center gap-1" ><FontAwesomeIcon icon={faPlus}/>Cadastrar movimento</button>
+                        <div className={`flex flex-col ${errors.description ? ' justify-center items-center' : ' justify-end items-end'}`}>
+                            <button type="submit" className="text-white bg-green-600 border rounded border-green-400 mt-2 p-2 flex items-center gap-1" ><FontAwesomeIcon icon={faPlus}/>Cadastrar movimento</button>
                         </div>
-                    </div>
+                    </form>
                     <div className="flex flex-col border rounded">
                         {/*Sumário */}
                         <div className="flex justify-between items-center p-2 border-b">                          

@@ -41,6 +41,7 @@ export default function Payment(){
     const [changeValue, setChangeValue] = useState(0);
     const {token} = useTokenStore();
     const [loading, setLoading] = useState(false);
+    const [loadingPage, setLoadingPage] = useState(true);
     const [saleSuccessing, setSaleSuccessing] = useState(false);
     const router = useRouter();
     const {member} = useMemberStore();
@@ -76,6 +77,7 @@ export default function Payment(){
     
     useEffect(()=>{
         registerLoadingIndicator(setLoading)
+        setLoadingPage(false);
     },[]);
 
     useEffect(() => {
@@ -242,7 +244,7 @@ export default function Payment(){
                 setSaleItems([]);
                 setPayments([]);               
                 setSaleSuccessing(true);
-                await delay(3000);
+                await delay(1500);
 
                 if(componentRef.current){
                     handlePrint();
@@ -266,6 +268,7 @@ export default function Payment(){
 
     return(
         <>
+        {loadingPage && <Loading message="Carregando..."/>}
         {loading && <Loading message="Finalizando venda ..."/>}
         {saleSuccessing && <SaleSucess message="Venda finalizada!"/>}
         {hasConsumption && <NewMember closeModal={closeModal} />}        

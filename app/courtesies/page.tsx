@@ -7,7 +7,7 @@ import Navbar from "../components/navbar"
 import Product from "../components/product";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import NewCourtesy from "../components/new-courtesy";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCourtesyStore, useTokenStore } from "../lib/zustand";
 import { api } from "../lib/axios";
 import CourtesyRow from "../components/courtesy-row";
@@ -27,7 +27,11 @@ export default function Courtesies(){
 
     const openModal = () => setModalOpen(true);
     
-    const closeModal = () => setModalOpen(false);
+    const closeModal = () => {
+      setModalOpen(false);
+      GetCourtesies();
+
+    } 
 
 
     const headers = [
@@ -37,34 +41,33 @@ export default function Courtesies(){
         "Quantidade",
         "Data"
     ];
-    
-    useEffect(() => {
-        async function GetCourtesies() {
-  
-          if (!token) {
-            console.error('No token found');
-            return;
-          }
-    
-          try {
-            const response = await api.get('/api/courtesies', {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-    
-            const result = response.data;
-              
-            if (result.isSuccess) {
-                setCourtesies(result.value);
-            }
-          } catch (error) {
-            console.error('GetCourtesies failed!', error);
-          }
+
+    const GetCourtesies = useCallback(async()=> {  
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+
+      try {
+        const response = await api.get('/api/courtesies', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const result = response.data;
+          
+        if (result.isSuccess) {
+            setCourtesies(result.value);
         }
+      } catch (error) {
+        console.error('GetCourtesies failed!', error);
+      }
+    }, [token, setCourtesies])
     
-        GetCourtesies();
-      }, [token, setCourtesies]);
+    useEffect(() => {        
+      GetCourtesies();
+    }, [GetCourtesies]);
 
 
 
