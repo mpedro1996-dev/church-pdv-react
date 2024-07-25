@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import Input from "../components/input"
 import ValidatorMessage from "../components/validator-message"
+import CloseCash from "../components/close-cash"
 
 const cashFlowSchema = z.object({   
     description: z.string().min(3, "Informe a descrição do movimento"),
@@ -31,6 +32,8 @@ export default function CashFlows(){
     const [loadingPage, setLoadingPage] = useState(true);
     const {payValue, setPayValue} = usePayValueStore();
     const [description, setDescription] = useState("");
+    const [modalOpen, setModalOpen] = useState(false);
+
 
     useEffect(() => {
         // Registrar a função setLoading no interceptor
@@ -41,6 +44,14 @@ export default function CashFlows(){
     const { handleSubmit , register, formState:{errors}} = useForm<CashFlowFormData>({       
         resolver:zodResolver(cashFlowSchema)
     });
+
+    const openModal = () => setModalOpen(true);
+    
+    const closeModal = () => {
+      setModalOpen(false);
+      
+    } 
+
 
     const GetCashFlows = useCallback(async() => {
   
@@ -198,6 +209,7 @@ export default function CashFlows(){
         <>
         {loadingPage && <Loading message={"Carregando..."}/>}
         {loading && <Loading message={"Carregando..."}/>}
+        {modalOpen && <CloseCash closeModal={closeModal}/>}    
 
         <div className="flex flex-col h-screen">
             <Navbar/>
@@ -233,7 +245,7 @@ export default function CashFlows(){
                             <h1><span className="font-bold">Crédito:</span> <CurrencyFormatter value={calculateCredit()}/></h1>
                             <h1><span className="font-bold">Pix:</span> <CurrencyFormatter value={calculatePix()}/></h1>
                             <h1><span className="font-bold">Fiado:</span> <CurrencyFormatter value={calculateConsumption()}/></h1>
-                            <button type="button" className="text-white bg-blue-500 border rounded border-blue-400 p-2 flex items-center gap-1" ><FontAwesomeIcon icon={faLock}/>Fechar caixa</button>
+                            <button type="button" className="text-white bg-blue-500 border rounded border-blue-400 p-2 flex items-center gap-1" onClick={() => openModal()} ><FontAwesomeIcon icon={faLock}/>Fechar caixa</button>
                         </div>  
                         {/* Movimentos - cabeçalho */}
                         <div className="flex justify-center p-2 items-center border-b font-bold">

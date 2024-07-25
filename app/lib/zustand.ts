@@ -237,4 +237,39 @@ const useCashFlowStore = create<CashFlowState>((set) => ({
   setCashFlows:(cashFlows)=>set({cashFlows:cashFlows})
 }))
 
-export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore, useMinistryStore, useCourtesyStore, useMemberStore, useCashFlowStore};
+export interface Cash {
+  cashFlows: CashFlow[],
+  cashValue: number,
+  debitValue: number,
+  creditValue: number,
+  pixValue: number,
+  consumptionValue: number,
+  opennedDate:Date,
+  closedDate:Date | null,
+  id:number
+}
+
+interface CashState {
+  cashes: Cash[],
+  setCashes:(cashes:Cash[]) => void;
+}
+
+const useCashStore = create<CashState>((set)=>({
+  cashes:[],
+  setCashes:(cashes)=>set({cashes:cashes})
+}))
+
+export { 
+  useTokenStore,
+  useProductStore,
+  useSaleStore,
+  useSaleItemStore,
+  usePaymentTypeStore,
+  usePayValueStore,
+  usePaymentStore,
+  useMinistryStore,
+  useCourtesyStore,
+  useMemberStore,
+  useCashFlowStore,
+  useCashStore,  
+};

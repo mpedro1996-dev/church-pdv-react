@@ -30,7 +30,6 @@ export default function Courtesies(){
     const closeModal = () => {
       setModalOpen(false);
       GetCourtesies();
-
     } 
 
 
