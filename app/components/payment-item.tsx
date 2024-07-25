@@ -9,7 +9,8 @@ interface PaymentItemProps {
     paymentType: number | null,
     value: number,
     changeValue: number | null,
-    receivedValue: number
+    receivedValue: number,
+    member: string | null,
     guid: string
 }
 
@@ -55,7 +56,7 @@ export default function PaymentItem(props:PaymentItemProps){
                     {props.changeValue ? <CurrencyFormatter value={props.changeValue}/> : "-"}            
                 </div>
                 <div className="flex flex-1">
-                    -
+                    {props.member ? props.member : "-"}
                 </div>
                 <div className="flex flex-1 text-center">
                     <button className="hover:text-red-600" type="button" onClick={() => handleRemove()}><FontAwesomeIcon icon={faTrash}/></button>

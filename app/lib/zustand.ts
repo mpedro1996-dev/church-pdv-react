@@ -89,11 +89,18 @@ const useSaleItemStore = create(
   )
 );
 
+interface Member {
+  name: string,
+  church: string,
+  phoneNumber: string
+}
+
 interface Payment{
   receivedValue: number;
   changeValue: number | null;
   value: number;
   paymentType: number | null;
+  member: Member | null;  
   guid: string
 }
 
@@ -103,6 +110,19 @@ interface PaymentState {
   addPayment: (payment: Payment) => void;
   removePayment: (guid: string) => void;
 }
+
+interface MemberState {
+  member: Member | null; 
+  setMember: (member: Member) => void;
+}
+
+const useMemberStore = create<MemberState>((set) =>({
+  member: null,
+  setMember:(member) => set({member})
+}))
+  
+
+
 
 const usePaymentStore = create(
   persist<PaymentState>(
@@ -122,6 +142,7 @@ const usePaymentStore = create(
 
 
 interface Sale{
+  code: string;
   saleItens: SaleItem[]; 
   payments: Payment[]; 
 }
@@ -198,4 +219,4 @@ const useCourtesyStore = create<CourtesyState>((set) => ({
   setCourtesies:(courtesies)=>set({courtesies:courtesies})
 }))
 
-export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore, useMinistryStore, useCourtesyStore};
+export { useTokenStore, useProductStore, useSaleStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore, useMinistryStore, useCourtesyStore, useMemberStore};

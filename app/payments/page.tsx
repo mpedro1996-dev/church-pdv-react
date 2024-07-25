@@ -9,8 +9,8 @@ import { faCreditCard as farCreditCard } from "@fortawesome/free-regular-svg-ico
 import CurrencyInput from "../components/currency-input"
 import CurrencyFormatter from "../components/currency-formatter"
 import PaymentType from "../components/payment-type-button"
-import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore } from "../lib/zustand"
-import { useEffect, useImperativeHandle, useRef, useState } from "react"
+import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore, useMemberStore } from "../lib/zustand"
+import { use, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import PaymentItem from "../components/payment-item"
 import { api, registerLoadingIndicator } from "../lib/axios"
@@ -19,7 +19,13 @@ import SaleSucess from "../components/sale-success"
 import { useRouter } from 'next/navigation';
 import PrintableSale from "../components/printable-sale"
 import { useReactToPrint } from "react-to-print"
+import NewMember from "../components/new-member"
 
+interface Member {
+    name: string,
+    church: string,
+    phoneNumber: string
+}
 
 
 export default function Payment(){
@@ -28,6 +34,7 @@ export default function Payment(){
     const {payValue, setPayValue} = usePayValueStore();  
     const [isWithoutPaymentType, setIsWithoutPaymentType] = useState(true);
     const [hasChangeValue, setHasChangeValue] = useState(false);
+    const [hasConsumption, setHasConsumption] = useState(false);
     const {saleItems, setSaleItems} = useSaleItemStore();
     const { payments, setPayments, addPayment} = usePaymentStore()
     const [remainValue, setRemainValue] = useState(0); 
@@ -36,6 +43,17 @@ export default function Payment(){
     const [loading, setLoading] = useState(false);
     const [saleSuccessing, setSaleSuccessing] = useState(false);
     const router = useRouter();
+    const {member} = useMemberStore();
+  
+
+    const openModal = () => setHasConsumption(true);
+    
+    const closeModal = (data:Member) => {       
+        createPayment(payValue,changeValue, data);  
+        setHasConsumption(false);        
+        setPayValue(0);
+        setPaymentType(null);   
+    }
 
     const[saleData, setSaleData] = useState(null);
 
@@ -120,6 +138,8 @@ export default function Payment(){
 
         let remainValue = calculateTotal() - calculatePayments(); 
 
+        let hasConsumption = paymentType === 5;
+
         if(receivedValue === 0)
         {
             receivedValue = remainValue;
@@ -136,18 +156,29 @@ export default function Payment(){
         {
             alert("Essa forma de pagamento não permite troco");
             return;            
-        }
+        }        
 
         if(receivedValue > remainValue){
             changeValue = receivedValue-remainValue;
             setHasChangeValue(true);
         }
 
-        setChangeValue(changeValue);        
-        createPayment(receivedValue,changeValue);
+        if(hasConsumption)
+        {
+            setHasConsumption(hasConsumption);
+            setPayValue(receivedValue);
+            openModal()
+        }
+        else
+        {
+            setChangeValue(changeValue);        
+            createPayment(receivedValue,changeValue);
+            setPayValue(0);
+            setPaymentType(null);     
+        }
+
         setRemainValue(remainValue);
-        setPayValue(0);
-        setPaymentType(null);          
+     
 
     }
 
@@ -161,7 +192,7 @@ export default function Payment(){
 
     }
 
-    const createPayment = (receivedValue: number,changeValue: number | null) =>{
+    const createPayment = (receivedValue: number,changeValue: number | null, member: Member | null = null) =>{
         let value = 0;
 
         if(changeValue !== null){
@@ -175,6 +206,7 @@ export default function Payment(){
             changeValue: changeValue,
             paymentType: paymentType,
             value: value,
+            member: member,
             guid: uuidv4()
         });
     }
@@ -191,7 +223,7 @@ export default function Payment(){
         {
             const data = {
                 "saleItems": saleItems.map((saleItem) =>({"productId": saleItem.product.id, "price": saleItem.product.price, "quantity": saleItem.quantity})),
-                "payments": payments.map((payment) => ({"paymentType": payment.paymentType, "value": payment.value }))
+                "payments": payments.map((payment) => ({"paymentType": payment.paymentType, "value": payment.value, "member": payment.member}))
             };
 
             const response = await api.post("/api/sales",
@@ -236,6 +268,7 @@ export default function Payment(){
         <>
         {loading && <Loading message="Finalizando venda ..."/>}
         {saleSuccessing && <SaleSucess message="Venda finalizada!"/>}
+        {hasConsumption && <NewMember closeModal={closeModal} />}        
         <div className="hidden">
             <div ref={componentRef}>
                 <PrintableSale sale={saleData}/>
@@ -251,11 +284,11 @@ export default function Payment(){
                     <div className="flex flex-col p-2">
                         <h2>Formas de pagamentos:</h2>
                         <div className="flex items-start mt-1 gap-3">
-                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={1} className="bg-green-700 text-white border-green-500 hover:bg-green-400"><FontAwesomeIcon icon={faMoneyBill}/> Dinheiro</PaymentType>
-                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={2} className="bg-cyan-600 text-white border-cyan-300 hover:bg-zinc-300"><FontAwesomeIcon icon={farCreditCard}/> Débito</PaymentType>
-                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={3} className="bg-blue-800 text-white border-blue-500 hover:bg-blue-500"><FontAwesomeIcon icon={faCreditCard}/> Crédito</PaymentType>
-                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={4} className="bg-green-900 text-white border-green-500 hover:bg-green-700"><FontAwesomeIcon icon={faPix}/> Pix</PaymentType>
-                            <PaymentType disabled={hasChangeValue || hasCompletedSale()} paymenttype={5} className="bg-red-600 text-white border-red-500 hover:bg-red-300"><FontAwesomeIcon icon={faAddressCard}/> Pós-pago/fiado</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale() || paymentType === 1} paymenttype={1} className="bg-green-700 text-white border-green-500 hover:bg-green-400"><FontAwesomeIcon icon={faMoneyBill}/> Dinheiro</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale() || paymentType === 2} paymenttype={2} className="bg-cyan-600 text-white border-cyan-300 hover:bg-zinc-300"><FontAwesomeIcon icon={farCreditCard}/> Débito</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale() || paymentType === 3} paymenttype={3} className="bg-blue-800 text-white border-blue-500 hover:bg-blue-500"><FontAwesomeIcon icon={faCreditCard}/> Crédito</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale() || paymentType === 4} paymenttype={4} className="bg-green-900 text-white border-green-500 hover:bg-green-700"><FontAwesomeIcon icon={faPix}/> Pix</PaymentType>
+                            <PaymentType disabled={hasChangeValue || hasCompletedSale() || paymentType === 5} paymenttype={5} className="bg-red-600 text-white border-red-500 hover:bg-red-300"><FontAwesomeIcon icon={faAddressCard}/> Pós-pago/fiado</PaymentType>
                         </div>
                     </div>
                     <div className="flex items-start p-2 gap-2">
@@ -312,7 +345,7 @@ export default function Payment(){
                         </div> 
 
                         {payments.map((payment)=>( 
-                            <PaymentItem key={payment.guid} guid={payment.guid} paymentType={payment.paymentType} value={payment.value} changeValue={payment.changeValue} receivedValue={payment.receivedValue} /> 
+                            <PaymentItem key={payment.guid} guid={payment.guid} paymentType={payment.paymentType} value={payment.value} changeValue={payment.changeValue} receivedValue={payment.receivedValue} member={payment.member ? payment.member.name : null} /> 
                         ))} 
                         
                      </div>

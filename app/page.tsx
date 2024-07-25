@@ -5,7 +5,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {api, registerLoadingIndicator} from './lib/axios';
 import Input  from './components/input';
 import ValidatorMessage from './components/validator-message';
-import {useTokenStore} from './lib/zustand';
+import {useTokenStore, useSaleItemStore, usePaymentTypeStore, usePayValueStore, usePaymentStore} from './lib/zustand';
 import { useRouter } from 'next/navigation';
 import Loading from './components/loading';
 import { useEffect, useState } from 'react';
@@ -25,6 +25,9 @@ export default function Login() {
     });
 
     const { setToken} = useTokenStore();
+    const { setSaleItems} = useSaleItemStore();
+    const { setPayValue} = usePayValueStore();
+    const { setPayments } = usePaymentStore();
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -42,6 +45,10 @@ export default function Login() {
             if(result.isSuccess)
             {
                 setToken(response.data.value.authToken);
+                setSaleItems([]);
+                setPayments([]);
+                setPayValue(0)
+
                 router.push('/pos');
 
             }        
