@@ -3,9 +3,12 @@ import PrintableFooter from './printable-footer';
 import PrintableProductHeader from './printable-product-header';
 import PrintableLogo from './printable-logo';
 import CurrencyFormatter from './currency-formatter';
+import { Sale } from '../lib/zustand';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHashtag } from '@fortawesome/free-solid-svg-icons';
 
 interface PrintableSaleProps{
-    sale:any    
+    sale:Sale | null    
 }
 
 const PrintableSale = forwardRef<HTMLDivElement, PrintableSaleProps>((props, ref) => {
@@ -27,16 +30,21 @@ const PrintableSale = forwardRef<HTMLDivElement, PrintableSaleProps>((props, ref
 
     const {sale} = props;    
 
-    let total = 0;
-    
-    if(sale !== null){
+    const calculateTotal = () =>{
+        if(sale !== null){
 
-        total = sale.saleItems.reduce((total: number, saleItem: any)=>{
+            return sale?.saleItems && sale.saleItems.reduce((total: number, saleItem)=>{
 
-            return total + (saleItem.unitPrice * saleItem.quantity);
+                    return total + (saleItem.unitPrice * saleItem.quantity);
 
-        },0)
+                },0)
+        }
+        else{
+            return 0
+        }
+        
     }
+
 
 
     
@@ -47,12 +55,12 @@ const PrintableSale = forwardRef<HTMLDivElement, PrintableSaleProps>((props, ref
             <PrintableLogo/>           
             {/* Informações da cortesia */}
             <div className="flex flex-col border-b border-black">
-                <h1 className="text-lg font-bold">Venda: #{sale?.id}</h1>
-                <h2 className="text-sm font-bold">Data:{formatDate(sale?.creationDate)}</h2>
+                <h1 className="text-lg font-bold">Venda: <FontAwesomeIcon icon={faHashtag}/> {sale?.code}</h1>
+                <h2 className="text-sm font-bold">Data:{sale?.creationDate && formatDate(sale.creationDate)}</h2>
             </div>
             <PrintableProductHeader/>          
             {/*Produtos*/}
-            {sale?.saleItems.map((saleItem:any,index:number) => (
+            {sale?.saleItems && sale.saleItems.map((saleItem:any,index:number) => (
             <div key={index} className="flex gap-1 py-2 items-start border-b border-black">
                 <p className="text-sm"><span className="font-bold">{saleItem.quantity}x</span> {saleItem.name} | <CurrencyFormatter value={saleItem.unitPrice * saleItem.quantity}/></p>
                
@@ -60,7 +68,7 @@ const PrintableSale = forwardRef<HTMLDivElement, PrintableSaleProps>((props, ref
             ))}
             <div className="flex border-b justify-between items-center border-black">
                 <h1 className="text-sm font-bold">Total:</h1>
-                <h2 className="text-sm font-bold"><CurrencyFormatter value={total}/></h2>
+                <h2 className="text-sm font-bold"><CurrencyFormatter value={calculateTotal()}/></h2>
             </div>
             <PrintableFooter/>   
         </div>

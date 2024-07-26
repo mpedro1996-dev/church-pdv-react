@@ -9,7 +9,7 @@ import { faCreditCard as farCreditCard } from "@fortawesome/free-regular-svg-ico
 import CurrencyInput from "../components/currency-input"
 import CurrencyFormatter from "../components/currency-formatter"
 import PaymentType from "../components/payment-type-button"
-import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore, useMemberStore } from "../lib/zustand"
+import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore, useMemberStore, Sale } from "../lib/zustand"
 import { use, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import PaymentItem from "../components/payment-item"
@@ -56,7 +56,7 @@ export default function Payment(){
         setPaymentType(null);   
     }
 
-    const[saleData, setSaleData] = useState(null);
+    const[saleData, setSaleData] = useState<Sale | null>(null);
 
     const componentRef = useRef<HTMLDivElement | null>(null);
 

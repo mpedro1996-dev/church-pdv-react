@@ -140,11 +140,17 @@ const usePaymentStore = create(
   )
 );
 
+interface SaleItemResponse{
+  name:string,
+  unitPrice: number,
+  quantity: number
+}
 
-interface Sale{
+export interface Sale{
+  id : number;
   code: string;
-  saleItens: SaleItem[]; 
-  payments: Payment[]; 
+  saleItems: SaleItemResponse[];   
+  creationDate: Date
 }
 
 interface SaleState{
