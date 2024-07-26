@@ -33,7 +33,7 @@ const PrintableCash = forwardRef<HTMLDivElement, PrintableCashProps>((props, ref
     const calculateCash = () => {
         return cash.cashFlows.reduce((totalCash, cashFlow) => {
 
-            if(cashFlow.paymentType == 1  || cashFlow.type == 0)
+            if(cashFlow.paymentType == 1  || cashFlow.type == 0 || cashFlow.type == 3)
             {
                 return totalCash + cashFlow.value;
             }

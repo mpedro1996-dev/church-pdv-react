@@ -30,6 +30,7 @@ export default function CashFlowRow(props: CashFlowRowProps){
             case 0: return "Suplemento";
             case 1: return "Sangria";
             case 2: return "Pagamento";
+            case 3: return "Abertura";
             default: return "Desconhecido";           
         }
     }
