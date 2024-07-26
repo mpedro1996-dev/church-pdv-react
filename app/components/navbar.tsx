@@ -14,10 +14,7 @@ export default function Navbar(){
             <NavLink href="/courtesies"><FontAwesomeIcon icon={faTicket}/>Cortesias</NavLink>
             <NavLink href="/cash-flows"><FontAwesomeIcon icon={faScaleBalanced}/>Movimentos de caixa</NavLink>
             <NavLink href="/cashes"><FontAwesomeIcon icon={faBriefcase}/>Caixas</NavLink>
-        </div>  
-        <div className="flex justify-end gap-4 col-2">            
-            <a href="" className="flex items-center gap-1 hover:text-blue-300"><FontAwesomeIcon icon={faRightFromBracket}/>Logout</a>            
-        </div>        
+        </div>           
     </nav>
     );
 }

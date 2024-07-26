@@ -146,10 +146,19 @@ interface SaleItemResponse{
   quantity: number
 }
 
+export interface PaymentResponse{
+  id: number,
+  paymentType: number,
+  value: number,
+  canUpdate: boolean,
+  member: Member | null
+}
+
 export interface Sale{
   id : number;
   code: string;
-  saleItems: SaleItemResponse[];   
+  saleItems: SaleItemResponse[];  
+  payments: PaymentResponse[] 
   creationDate: Date
 }
 

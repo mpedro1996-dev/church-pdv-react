@@ -5,17 +5,23 @@ import Navbar from "../components/navbar"
 import { faLock, faPlus, faPrint } from "@fortawesome/free-solid-svg-icons"
 import { useCallback, useEffect, useState } from "react"
 import { api, registerLoadingIndicator } from "../lib/axios"
-import { useTokenStore } from "../lib/zustand"
+import { useSaleStore, useTokenStore } from "../lib/zustand"
 import Loading from "../components/loading"
 import CurrencyFormatter from "../components/currency-formatter"
+import SaleRow from "../components/sale-row"
+import UpdatePayment from "../components/update-payment"
 
-export default function CashFlows(){
+export default function Sales(){
 
     const { token } = useTokenStore();
     const [loading, setLoading] = useState(false);
     const [loadingPage, setLoadingPage] = useState(true); 
     const [code, setCode] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
+    const [id, setId] = useState(0);
+    const [paymentType, setPaymentType] = useState(0);
+
+    const {sales, setSales} = useSaleStore();
 
 
     useEffect(() => {
@@ -24,15 +30,20 @@ export default function CashFlows(){
         setLoadingPage(false);
     }, []);  
 
-    const openModal = () => setModalOpen(true);
+    const openModal = (id: number, paymentType: number) => {
+        setId(id);
+        setPaymentType(paymentType);
+        setModalOpen(true)
+    };
     
     const closeModal = () => {
       setModalOpen(false);
+      GetSales();
       
     } 
 
 
-    const GetCashFlows = useCallback(async() => {
+    const GetSales = useCallback(async() => {
   
         if (!token) {
           console.error('No token found');
@@ -40,7 +51,7 @@ export default function CashFlows(){
         }
   
         try {
-          const response = await api.get('/api/cash-flows', {
+          const response = await api.get('/api/sales', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -50,32 +61,33 @@ export default function CashFlows(){
 
             
           if (result.isSuccess) {
+
+            setSales(result.value);
                         
           }
         } catch (error) {
-          console.error('GetCashFlows failed!', error);
+          console.error('GetSales failed!', error);
         }
-      },[token])
+      },[token, setSales])
 
 
 
     useEffect(() => {
        
-        GetCashFlows();
+        GetSales();
     
-    }, [GetCashFlows]);
+    }, [GetSales]);
+     
 
 
-
-
-
-      
-
-
-      const handleDescriptionChange = (event : React.ChangeEvent<HTMLInputElement>) => {
+    const handleCodeChange = (event : React.ChangeEvent<HTMLInputElement>) => {
         setCode(event.target.value);
-      };
+    };
 
+    const filteredSales = sales.filter(sale =>
+        
+        (sale.code.includes(code))
+    );
 
 
 
@@ -83,6 +95,7 @@ export default function CashFlows(){
         <>
         {loadingPage && <Loading message={"Carregando..."}/>}
         {loading && <Loading message={"Carregando..."}/>}
+        {modalOpen && <UpdatePayment closeModal={closeModal} id={id} paymentType={paymentType}/>}
 
         <div className="flex flex-col h-screen">
             <Navbar/>
@@ -91,22 +104,15 @@ export default function CashFlows(){
                     <div className="flex flex-row gap-2 mb-2">                    
                         <div className="flex flex-col">
                             <label>Código da venda:</label>
-                            <input type="text" name="code" className="w-full" onChange={handleDescriptionChange} value={code} />
+                            <input type="text" name="code" className="rounded border border-zinc-400 shadow-sm w-full h-10 px-2" onChange={handleCodeChange} value={code} />
 
                         </div>                        
                     </div>
                     <div className="flex flex-col border rounded">
-                        {/*Sumário */}
-                        <div className="flex justify-between items-center p-2 border-b">                          
-                            <h1><span className="font-bold">Dinheiro:</span></h1>
-                            <h1><span className="font-bold">Debito:</span> </h1>
-                            <h1><span className="font-bold">Crédito:</span> </h1>
-                            <h1><span className="font-bold">Pix:</span></h1>
-                            <h1><span className="font-bold">Fiado:</span></h1>
-                            <div className="">
-                                <button type="button" className="text-white bg-blue-500 border rounded border-blue-400 p-2 flex items-center gap-1" onClick={() => openModal()} ><FontAwesomeIcon icon={faPrint}/></button>
-                            </div>
-                        </div>    
+                    {filteredSales.map((sale)=>(
+                        <SaleRow key={sale.id} sale={sale} actionButton={openModal} dimissButton={closeModal} />
+                    ))}
+                        
                         
                    
                     </div>
