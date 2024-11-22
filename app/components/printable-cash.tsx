@@ -121,6 +121,8 @@ const PrintableCash = forwardRef<HTMLDivElement, PrintableCashProps>((props, ref
                 <h1 className="text-lg font-bold">Caixa: #{cash.id}</h1>
                 <h2 className="text-sm font-bold flex flex-col">Data de abertura:<span className='text-xs'>{formatDate(cash.opennedDate)}</span></h2>
                 <h2 className="text-sm font-bold flex flex-col">Data de fechamento:<span className='text-xs'>{cash.closedDate ? formatDate(cash.closedDate) : "-"}</span></h2>
+                <h2 className="text-sm font-bold flex flex-col">Valor de abertura:<span className='text-xs'><CurrencyFormatter value={cash.opennedValue}/></span></h2>
+                
             </div>
             {/*Produtos*/}
             <div className="flex flex-col border-b border-black py-1">

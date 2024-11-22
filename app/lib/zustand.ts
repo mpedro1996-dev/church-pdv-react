@@ -258,6 +258,7 @@ export interface Cash {
   debitValue: number,
   creditValue: number,
   pixValue: number,
+  opennedValue:number,
   consumptionValue: number,
   opennedDate:Date,
   closedDate:Date | null,

@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { date } from 'zod';
 
 export const api = axios.create({
-    baseURL:'http://localhost:5091',
+    baseURL: process.env.API_URL,
     headers: {
         'Content-Type': 'application/json',
     }
