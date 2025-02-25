@@ -157,9 +157,10 @@ export interface PaymentResponse{
 export interface Sale{
   id : number;
   code: string;
-  saleItems: SaleItemResponse[];  
-  payments: PaymentResponse[] 
-  creationDate: Date
+  saleItems: SaleItemResponse[];
+  payments: PaymentResponse[];
+  creationDate: Date;
+  canCancel: boolean;
 }
 
 interface SaleState{

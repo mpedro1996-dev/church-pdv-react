@@ -75,7 +75,7 @@ export default function UpdatePayment(props:UpdatePaymentProps){
             <div>
                 <div className="flex flex-col gap-2 mt-1">
                     <div className="flex flex-col gap-1">
-                        <label>Ministério:</label>
+                        <label>Forma de pagamento:</label>
                         <select className="rounded border border-zinc-400 shadow-sm w-full h-10 px-2" onChange={handlePaymentTypeChange} defaultValue={ paymentType == 1 || paymentType == 5 ? 1 : paymentType} >
                             <option value={1}>Dinheiro</option>
                             <option value={2}>Débito</option>

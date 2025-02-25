@@ -91,79 +91,98 @@ export default function CashFlows(){
       const calculateCash = () => {
         return cashFlows.reduce((totalCash, cashFlow) => {
 
-            if(cashFlow.paymentType == 1  || cashFlow.type == 0 || cashFlow.type == 3)
+            if((cashFlow.paymentType == 1 && cashFlow.type != 4)  || cashFlow.type == 0 || cashFlow.type == 3)
             {
                 return totalCash + cashFlow.value;
             }
-            if(cashFlow.type == 1)
+            if(cashFlow.type == 1 || (cashFlow.paymentType == 1 && cashFlow.type == 4))
             {
+
                 return totalCash - cashFlow.value;
             }
             else
             {
                 return totalCash + 0;
             }
-            
+
           }, 0);
       }
 
       const calculateDebit = () => {
         return cashFlows.reduce((totalDebit, cashFlow) => {
 
-            if(cashFlow.paymentType == 2)
+            if((cashFlow.paymentType == 2 && cashFlow.type != 4))
             {
                 return totalDebit + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 2 && cashFlow.type == 4)
+            {
+
+                return totalDebit - cashFlow.value;
             }
             else
             {
                 return totalDebit + 0
-            }         
-            
+            }
+
           }, 0);
       }
 
       const calculateCredit = () => {
         return cashFlows.reduce((totalCredit, cashFlow) => {
 
-            if(cashFlow.paymentType == 3)
+            if((cashFlow.paymentType == 3 && cashFlow.type != 4))
             {
                 return totalCredit + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 3 && cashFlow.type == 4)
+            {
+
+                return totalCredit - cashFlow.value;
             }
             else
             {
                 return totalCredit + 0
-            }         
-            
+            }
+
           }, 0);
       }
 
       const calculatePix = () => {
         return cashFlows.reduce((totalPix, cashFlow) => {
 
-            if(cashFlow.paymentType == 4)
+            if((cashFlow.paymentType == 4 && cashFlow.type != 4))
             {
                 return totalPix + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 4 && cashFlow.type == 4)
+            {
+                return totalPix - cashFlow.value;
             }
             else
             {
                 return totalPix + 0
-            }         
-            
+            }
+
           }, 0);
       }
 
       const calculateConsumption = () => {
         return cashFlows.reduce((totalConsumption, cashFlow) => {
 
-            if(cashFlow.paymentType == 5)
+            if(cashFlow.paymentType == 5 && cashFlow.type != 4)
             {
                 return totalConsumption + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 5 && cashFlow.type == 4)
+            {
+                return totalConsumption - cashFlow.value;
             }
             else
             {
                 return totalConsumption + 0
-            }         
-            
+            }
+
           }, 0);
       }
 

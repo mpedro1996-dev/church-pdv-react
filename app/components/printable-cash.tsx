@@ -26,88 +26,107 @@ const PrintableCash = forwardRef<HTMLDivElement, PrintableCashProps>((props, ref
         return `${date.toLocaleDateString('pt-BR', optionsDate)} ${date.toLocaleTimeString('pt-BR', optionsTime)}`;
     };
 
-    const {cash} = props;  
+    const {cash} = props;
 
 
-    
+
     const calculateCash = () => {
         return cash.cashFlows.reduce((totalCash, cashFlow) => {
 
-            if(cashFlow.paymentType == 1  || cashFlow.type == 0 || cashFlow.type == 3)
+            if((cashFlow.paymentType == 1 && cashFlow.type != 4)  || cashFlow.type == 0 || cashFlow.type == 3)
             {
                 return totalCash + cashFlow.value;
             }
-            if(cashFlow.type == 1)
+            if(cashFlow.type == 1 || (cashFlow.paymentType == 1 && cashFlow.type == 4))
             {
+
                 return totalCash - cashFlow.value;
             }
             else
             {
                 return totalCash + 0;
             }
-            
-          }, 0);
-      }
 
-      const calculateDebit = () => {
+        }, 0);
+    }
+
+    const calculateDebit = () => {
         return cash.cashFlows.reduce((totalDebit, cashFlow) => {
 
-            if(cashFlow.paymentType == 2)
+            if((cashFlow.paymentType == 2 && cashFlow.type != 4))
             {
                 return totalDebit + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 2 && cashFlow.type == 4)
+            {
+
+                return totalDebit - cashFlow.value;
             }
             else
             {
                 return totalDebit + 0
-            }         
-            
-          }, 0);
-      }
+            }
 
-      const calculateCredit = () => {
+        }, 0);
+    }
+
+    const calculateCredit = () => {
         return cash.cashFlows.reduce((totalCredit, cashFlow) => {
 
-            if(cashFlow.paymentType == 3)
+            if((cashFlow.paymentType == 3 && cashFlow.type != 4))
             {
                 return totalCredit + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 3 && cashFlow.type == 4)
+            {
+
+                return totalCredit - cashFlow.value;
             }
             else
             {
                 return totalCredit + 0
-            }         
-            
-          }, 0);
-      }
+            }
 
-      const calculatePix = () => {
+        }, 0);
+    }
+
+    const calculatePix = () => {
         return cash.cashFlows.reduce((totalPix, cashFlow) => {
 
-            if(cashFlow.paymentType == 4)
+            if((cashFlow.paymentType == 4 && cashFlow.type != 4))
             {
                 return totalPix + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 4 && cashFlow.type == 4)
+            {
+                return totalPix - cashFlow.value;
             }
             else
             {
                 return totalPix + 0
-            }         
-            
-          }, 0);
-      }
+            }
 
-      const calculateConsumption = () => {
+        }, 0);
+    }
+
+    const calculateConsumption = () => {
         return cash.cashFlows.reduce((totalConsumption, cashFlow) => {
 
-            if(cashFlow.paymentType == 5)
+            if(cashFlow.paymentType == 5 && cashFlow.type != 4)
             {
                 return totalConsumption + cashFlow.value;
+            }
+            if(cashFlow.paymentType == 5 && cashFlow.type == 4)
+            {
+                return totalConsumption - cashFlow.value;
             }
             else
             {
                 return totalConsumption + 0
-            }         
-            
-          }, 0);
-      }
+            }
+
+        }, 0);
+    }
 
 
     
