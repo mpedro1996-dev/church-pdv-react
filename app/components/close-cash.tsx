@@ -1,11 +1,15 @@
 import { faLock, faXmark } from "@fortawesome/free-solid-svg-icons";
 import Loading from "./loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ChangeEvent, useEffect, useState } from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import { defaultErrorMap } from "zod";
 import { api, registerLoadingIndicator } from "../lib/axios";
-import { useTokenStore } from "../lib/zustand";
+import {Cash, Sale, useTokenStore} from "../lib/zustand";
 import { useRouter } from 'next/navigation';
+import PrintableSale from "@/app/components/printable-sale";
+import PrintableCash from "@/app/components/printable-cash";
+import {useReactToPrint} from "react-to-print";
+import SaleSucess from "@/app/components/sale-success";
 
 interface CloseCashProps{
     closeModal:() => void;
@@ -15,6 +19,7 @@ export default function CloseCash(props: CloseCashProps){
 
     const [loading, setLoading] = useState(false);
     const [isLogout, setIsLogout] = useState(false);
+    const [closeCashSuccesing, setCloseCashSuccesing] = useState(false);
 
     const [cashValue, setCashValue] = useState(0);
     const [debitValue, setDebitValue] = useState(0);
@@ -24,10 +29,14 @@ export default function CloseCash(props: CloseCashProps){
     const {token} = useTokenStore();
     const router = useRouter();
 
+    const[cashData, setCashData] = useState<Cash | null>(null);
+
     useEffect(() => {
         // Registrar a função setLoading no interceptor
         registerLoadingIndicator(setLoading);
     }, []);
+
+    const componentRef = useRef<HTMLDivElement | null>(null);
 
     const handleChange = (e : ChangeEvent<HTMLInputElement>) => {
         let inputValue = e.target.value.replace(/[^0-9]/g, '');
@@ -74,6 +83,25 @@ export default function CloseCash(props: CloseCashProps){
         }
     }
 
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        documentTitle: 'Relatório de Impressão',
+        onBeforeGetContent: () => {
+            if (componentRef.current) {
+                componentRef.current.style.width = '58mm';
+            }
+            return Promise.resolve();
+        },
+        onAfterPrint:() =>{
+            setIsLogout(true);
+            router.push('/');
+        }
+    });
+
+    function delay(ms:number){
+        return new Promise(resolve => setTimeout(resolve,ms));
+    }
+
     async function handleSubmit(e: React.FormEvent){
 
         e.preventDefault();
@@ -98,9 +126,15 @@ export default function CloseCash(props: CloseCashProps){
             const result = response.data;
 
             if(result.isSuccess)
-            {                
-                setIsLogout(true);
-                router.push('/');
+            {
+                setCashData(result.value);
+                setCloseCashSuccesing(true);
+                await delay(1500);
+
+                if(componentRef.current){
+                    handlePrint();
+                }
+
             }        
         }
         catch(error)
@@ -108,8 +142,6 @@ export default function CloseCash(props: CloseCashProps){
             console.error('Login failed', error);
         }
 
-
-        console.log(data);
     }
     
 
@@ -118,7 +150,13 @@ export default function CloseCash(props: CloseCashProps){
 
         <div className="transition-all fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
         {loading && <Loading message="Aguarde..."/>} 
-        {isLogout && <Loading message="Fazendo logout..."/>} 
+        {isLogout && <Loading message="Fazendo logout..."/>}
+        {closeCashSuccesing && <SaleSucess message="Caixa fechado!"/>}
+        <div className="hidden">
+            <div ref={componentRef}>
+                <PrintableCash cash={cashData}/>
+            </div>
+        </div>
           <div className="bg-white w-72 p-4 rounded shadow-lg relative z-0 text-black flex flex-col">
             <div className="border-b rounded p-2 flex justify-between">
                 <h1 className="font-semibold">Fechamento de caixa</h1>

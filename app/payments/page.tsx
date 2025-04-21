@@ -62,17 +62,17 @@ export default function Payment(){
 
     
     const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    documentTitle: 'Relatório de Impressão',
-    onBeforeGetContent: () => {
-        if (componentRef.current) {
-         componentRef.current.style.width = '58mm';
+        content: () => componentRef.current,
+        documentTitle: 'Relatório de Impressão',
+        onBeforeGetContent: () => {
+            if (componentRef.current) {
+             componentRef.current.style.width = '58mm';
+            }
+            return Promise.resolve();
+        },
+        onAfterPrint:() =>{
+            router.push("/pos");
         }
-        return Promise.resolve();
-    },
-    onAfterPrint:() =>{
-        router.push("/pos");
-    }
     });
     
     useEffect(()=>{

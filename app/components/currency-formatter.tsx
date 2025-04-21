@@ -22,7 +22,7 @@ interface CurrencyFormatterProps {
       maximumFractionDigits: maximumFractionDigits,
     });
   
-    return formatter.format(value);
+    return formatter.format(value ?? 0);
   };
 
 

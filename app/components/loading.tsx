@@ -8,7 +8,7 @@ interface LoadingProps{
 
 export default function Loading(props:LoadingProps){
     return(
-    <div className="transition-all fixed inset-0 z-50 w-full h-screen opacity-70 bg-black flex flex-col gap-4 justify-center items-center text-white">
+    <div className="transition-all fixed inset-0 z-[100] w-full h-screen opacity-70 bg-black flex flex-col gap-4 justify-center items-center text-white">
         <span className="text-9xl animate-spin">
             <FontAwesomeIcon icon={faSpinner}/>
         </span>
