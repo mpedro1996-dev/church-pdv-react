@@ -1,28 +1,28 @@
-import { create }  from 'zustand';
-import { persist } from 'zustand/middleware';
-import PaymentType from '../components/payment-type-button';
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
-interface TokenState {  
+interface TokenState {
   token: string | null;
-  setToken: (token:string) => void;
+  setToken: (token: string) => void;
   clearToken: () => void;
 }
 
 const useTokenStore = create(
   persist<TokenState>(
-      (set) => ({
-          token: null,
-          setToken: (token) => {              
-              set({ token : token });              
-          },
-          clearToken: () => {
-              set({ token: null });
-              localStorage.clear();
-          },
-      }),
-      {
-          name: 'userLoginStatus',
-      }
+    (set) => ({
+      token: null,
+      setToken: (token) => {
+        set({ token: token });
+      },
+      clearToken: () => {
+        set({ token: null });
+        sessionStorage.clear();
+      },
+    }),
+    {
+      name: 'userLoginStatus',
+      storage: createJSONStorage(() => sessionStorage),
+    }
   )
 );
 
@@ -35,7 +35,7 @@ interface Product {
 }
 
 
-interface ProductState{
+interface ProductState {
   products: Product[],
   setProducts: (products: Product[]) => void
   addProduct: (product: Product) => void;
@@ -44,7 +44,7 @@ interface ProductState{
 
 const useProductStore = create<ProductState>((set) => ({
   products: [],
-  setProducts: (products) => set({products: products}),
+  setProducts: (products) => set({ products: products }),
   addProduct: (product) => set((state) => ({ products: [...state.products, product] })),
   removeProduct: (id) => set((state) => ({
     products: state.products.filter((product) => product.id !== id)
@@ -52,7 +52,7 @@ const useProductStore = create<ProductState>((set) => ({
 }));
 
 
-interface SaleItem{
+interface SaleItem {
   product: Product;
   quantity: number;
 }
@@ -84,7 +84,7 @@ const useSaleItemStore = create(
         })),
     }),
     {
-      name: 'saleItem-storage', // Nome usado para armazenar no localStorage
+      name: 'saleItem-storage'
     }
   )
 );
@@ -95,12 +95,12 @@ interface Member {
   phoneNumber: string
 }
 
-interface Payment{
+interface Payment {
   receivedValue: number;
   changeValue: number | null;
   value: number;
   paymentType: number | null;
-  member: Member | null;  
+  member: Member | null;
   guid: string
 }
 
@@ -112,15 +112,15 @@ interface PaymentState {
 }
 
 interface MemberState {
-  member: Member | null; 
+  member: Member | null;
   setMember: (member: Member) => void;
 }
 
-const useMemberStore = create<MemberState>((set) =>({
+const useMemberStore = create<MemberState>((set) => ({
   member: null,
-  setMember:(member) => set({member})
+  setMember: (member) => set({ member })
 }))
-  
+
 
 
 
@@ -128,11 +128,11 @@ const usePaymentStore = create(
   persist<PaymentState>(
     (set) => ({
       payments: [],
-      setPayments: (payments:Payment[]) => set({ payments }),
-      addPayment: (payment:Payment) => set((state) => ({ payments: [...state.payments, payment] })),
-      removePayment: (guid:string) => set((state) => ({
+      setPayments: (payments: Payment[]) => set({ payments }),
+      addPayment: (payment: Payment) => set((state) => ({ payments: [...state.payments, payment] })),
+      removePayment: (guid: string) => set((state) => ({
         payments: state.payments.filter((payment) => payment.guid !== guid)
-      }))      
+      }))
     }),
     {
       name: 'payment-storage', // Nome usado para armazenar no localStorage
@@ -140,13 +140,13 @@ const usePaymentStore = create(
   )
 );
 
-interface SaleItemResponse{
-  name:string,
+interface SaleItemResponse {
+  name: string,
   unitPrice: number,
   quantity: number
 }
 
-export interface PaymentResponse{
+export interface PaymentResponse {
   id: number,
   paymentType: number,
   value: number,
@@ -154,8 +154,8 @@ export interface PaymentResponse{
   member: Member | null
 }
 
-export interface Sale{
-  id : number;
+export interface Sale {
+  id: number;
   code: string;
   saleItems: SaleItemResponse[];
   payments: PaymentResponse[];
@@ -163,94 +163,106 @@ export interface Sale{
   canCancel: boolean;
 }
 
-interface SaleState{
-  sales:Sale[];
+interface SaleState {
+  sales: Sale[];
   sale: Sale | null;
   setSales: (sales: Sale[]) => void;
   setSale: (sale: Sale) => void;
 }
 
 const useSaleStore = create<SaleState>((set) => ({
-    sales:[],
-    sale: null,
-    setSales: (sales) => set({sales: sales}),
-    setSale:(sale) => set({sale: sale})
+  sales: [],
+  sale: null,
+  setSales: (sales) => set({ sales: sales }),
+  setSale: (sale) => set({ sale: sale })
 
-  })
+})
 )
 
-interface PaymentTypeState{
-  paymentType:number | null,
-  setPaymentType: (paymentType:number | null) => void;
+interface PaymentTypeState {
+  paymentType: number | null,
+  setPaymentType: (paymentType: number | null) => void;
 }
 
 const usePaymentTypeStore = create<PaymentTypeState>((set) => ({
   paymentType: null,
-  setPaymentType: (paymentType) => set({paymentType: paymentType})
+  setPaymentType: (paymentType) => set({ paymentType: paymentType })
 }))
 
 
-interface PayValueState{
-  payValue:number,
-  setPayValue:(payValue:number) => void
+interface PayValueState {
+  payValue: number,
+  setPayValue: (payValue: number) => void
 }
 
 const usePayValueStore = create<PayValueState>((set) => ({
-  payValue:0,
-  setPayValue: (payValue) => set({payValue: payValue})
+  payValue: 0,
+  setPayValue: (payValue) => set({ payValue: payValue })
 }))
 
-interface Ministry{
+interface UIState {
+  loading: boolean;
+  message: string | null;
+  setLoading: (loading: boolean, message?: string | null) => void;
+}
+
+const useUiStore = create<UIState>((set) => ({
+  loading: false,
+  message: null,
+  setLoading: (loading: boolean, message: string | null = null) => set({ loading, message }),
+}));
+
+interface Ministry {
   id: number,
   name: string,
   acronym: string
 }
 
-interface MinistryState{
-  ministries:Ministry[]
-  setMinistries:(ministries:Ministry[]) => void
+interface MinistryState {
+  ministries: Ministry[]
+  setMinistries: (ministries: Ministry[]) => void
 }
 
-const useMinistryStore = create<MinistryState>((set)=>({
-  ministries:[],
-  setMinistries:(ministries) => set({ministries: ministries}) 
+const useMinistryStore = create<MinistryState>((set) => ({
+  ministries: [],
+  setMinistries: (ministries) => set({ ministries: ministries })
 }))
 
 
-interface Courtesy{
+interface Courtesy {
   id: number,
   ministry: string,
-  product:string,
+  product: string,
   quantity: number,
   creationDate: Date
 }
 
-interface CourtesyState{
+interface CourtesyState {
   courtesies: Courtesy[],
-  setCourtesies: (courtesies:Courtesy[]) => void 
+  setCourtesies: (courtesies: Courtesy[]) => void
 }
 
 const useCourtesyStore = create<CourtesyState>((set) => ({
-  courtesies:[],
-  setCourtesies:(courtesies)=>set({courtesies:courtesies})
+  courtesies: [],
+  setCourtesies: (courtesies) => set({ courtesies: courtesies })
 }))
 
 
-interface CashFlow{
+interface CashFlow {
   value: number,
   paymentType: number | null,
   type: number,
   description: string
 }
 
-interface CashFlowState{
-  cashFlows:CashFlow[],
+interface CashFlowState {
+  cashFlows: CashFlow[],
   setCashFlows: (cashFlows: CashFlow[]) => void;
 }
 
 const useCashFlowStore = create<CashFlowState>((set) => ({
-  cashFlows:[],
-  setCashFlows:(cashFlows)=>set({cashFlows:cashFlows})
+  cashFlows: [],
+  setCashFlows: (cashFlows) => set({ cashFlows: cashFlows })
 }))
 
 export interface Cash {
@@ -259,24 +271,24 @@ export interface Cash {
   debitValue: number,
   creditValue: number,
   pixValue: number,
-  opennedValue:number,
+  opennedValue: number,
   consumptionValue: number,
-  opennedDate:Date,
-  closedDate:Date | null,
-  id:number
+  opennedDate: Date,
+  closedDate: Date | null,
+  id: number
 }
 
 interface CashState {
   cashes: Cash[],
-  setCashes:(cashes:Cash[]) => void;
+  setCashes: (cashes: Cash[]) => void;
 }
 
-const useCashStore = create<CashState>((set)=>({
-  cashes:[],
-  setCashes:(cashes)=>set({cashes:cashes})
+const useCashStore = create<CashState>((set) => ({
+  cashes: [],
+  setCashes: (cashes) => set({ cashes: cashes })
 }))
 
-export { 
+export {
   useTokenStore,
   useProductStore,
   useSaleStore,
@@ -288,5 +300,6 @@ export {
   useCourtesyStore,
   useMemberStore,
   useCashFlowStore,
-  useCashStore,  
+  useCashStore,
+  useUiStore,
 };
