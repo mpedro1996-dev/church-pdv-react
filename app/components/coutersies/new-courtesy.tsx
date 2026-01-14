@@ -1,12 +1,12 @@
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Input from "./input";
+import Input from "../input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import ValidatorMessage from "./validator-message";
-import { api } from "../lib/axios";
-import { useMinistryStore, useTokenStore } from "../lib/zustand";
+import ValidatorMessage from "../validator-message";
+import { api } from "../../lib/axios";
+import { useMinistryStore, useTokenStore, useUiStore } from "../../lib/zustand";
 import { useEffect, useState } from "react";
 
 const courtesySchema = z.object({

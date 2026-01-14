@@ -1,25 +1,25 @@
 'use client'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import Cart from "../components/cart"
+import Cart from "../components/pos/cart"
 import Navbar from "../components/navbar"
 import { faPix } from "@fortawesome/free-brands-svg-icons"
 import { faMoneyBill, faCreditCard, faAddressCard, faHandHoldingDollar, faTrash, faGears, faFlagCheckered, faWallet, faCross, faCrosshairs, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { faCreditCard as farCreditCard } from "@fortawesome/free-regular-svg-icons"
 import CurrencyInput from "../components/currency-input"
 import CurrencyFormatter from "../components/currency-formatter"
-import PaymentType from "../components/payment-type-button"
+import PaymentType from "../components/payments/payment-type"
 import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore, useMemberStore, Sale } from "../lib/zustand"
 import { use, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
-import PaymentItem from "../components/payment-item"
+import PaymentItem from "../components/payments/payment-item"
 import { api } from "../lib/axios"
 
-import SaleSucess from "../components/sale-success"
+import SaleSucess from "../components/payments/sale-success"
 import { useRouter } from 'next/navigation';
 import PrintableSale from "../components/printable-sale"
 import { useReactToPrint } from "react-to-print"
-import NewMember from "../components/new-member"
+import NewMember from "../components/payments/new-member"
 
 interface Member {
     name: string,

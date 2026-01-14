@@ -1,16 +1,16 @@
 import { ComponentProps } from "react";
-import { usePaymentTypeStore } from "../lib/zustand";
+import { usePaymentTypeStore } from "../../lib/zustand";
 
 
-interface PaymentTypeProps extends ComponentProps<'button'>{
+interface PaymentTypeProps extends ComponentProps<'button'> {
     paymenttype: number;
 }
 
-export default function PaymentType(props:PaymentTypeProps){
+export default function PaymentType(props: PaymentTypeProps) {
 
-    const {paymentType, setPaymentType} = usePaymentTypeStore();    
+    const { paymentType, setPaymentType } = usePaymentTypeStore();
 
-    const HandleClickPaymentType = () => {        
+    const HandleClickPaymentType = () => {
         setPaymentType(props.paymenttype);
     }
 
@@ -19,7 +19,7 @@ export default function PaymentType(props:PaymentTypeProps){
     }
 
 
-    return(
+    return (
         <button disabled={isPaymentTypeSelected() || props.disabled} {...props} className={`${props.className} border rounded p-2 w-full disabled:border-zinc-400 disabled:bg-zinc-400 disabled:text-zinc-200`} onClick={() => HandleClickPaymentType()}>{props.children}</button>
     )
 }

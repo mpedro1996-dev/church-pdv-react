@@ -1,8 +1,8 @@
 'use client'
 
 import Navbar from "../components/navbar";
-import Cart from "../components/cart";
-import Product from "../components/product";
+import Cart from "../components/pos/cart";
+import Product from "../components/pos/product";
 import { faWallet } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 

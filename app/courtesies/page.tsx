@@ -6,7 +6,7 @@ import FlexTableRow from "../components/flex-table-row";
 import Navbar from "../components/navbar"
 import Product from "../components/product";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import NewCourtesy from "../components/new-courtesy";
+import NewCourtesy from "../components/coutersies/new-courtesy";
 import { useCallback, useEffect, useState } from "react";
 import { useCourtesyStore, useTokenStore } from "../lib/zustand";
 import { api } from "../lib/axios";

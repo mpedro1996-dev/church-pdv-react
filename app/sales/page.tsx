@@ -1,15 +1,11 @@
 'use client'
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import Navbar from "../components/navbar"
-import { faLock, faPlus, faPrint } from "@fortawesome/free-solid-svg-icons"
 import { useCallback, useEffect, useState } from "react"
 import { api } from "../lib/axios"
 import { useSaleStore, useTokenStore } from "../lib/zustand"
 
-import CurrencyFormatter from "../components/currency-formatter"
-import SaleRow from "../components/sale-row"
-import UpdatePayment from "../components/update-payment"
+import SaleRow from "../components/sales/sale-row"
+import UpdatePayment from "../components/sales/update-payment"
 
 export default function Sales() {
 

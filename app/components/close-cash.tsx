@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import PrintableSale from "@/app/components/printable-sale";
 import PrintableCash from "@/app/components/printable-cash";
 import { useReactToPrint } from "react-to-print";
-import SaleSucess from "@/app/components/sale-success";
+import SaleSucess from "@/app/components/payments/sale-success";
 
 interface CloseCashProps {
     closeModal: () => void;

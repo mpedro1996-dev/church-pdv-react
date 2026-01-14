@@ -19,10 +19,10 @@ export default function ClientRoot({ children, className }: Props) {
     return (
         <html>
             <body>
+                {isLoggedIn && <Navbar />}
                 <div className="flex flex-col h-screen">
                     <AxiosInterceptor />
                     <GlobalLoading />
-                    {isLoggedIn && <Navbar />}
                     <div className="flex-1">{children}</div>
                 </div>
             </body>

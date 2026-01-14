@@ -1,7 +1,7 @@
 import { faFloppyDisk, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { api } from "../lib/axios";
-import { useTokenStore } from "../lib/zustand";
+import { api } from "../../lib/axios";
+import { useTokenStore, useUiStore } from "../../lib/zustand";
 import { useState } from "react";
 
 
