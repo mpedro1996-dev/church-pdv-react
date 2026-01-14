@@ -1,8 +1,12 @@
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AxiosInterceptor from "./components/axios-interceptor";
 import GlobalLoading from "./components/global-loading";
+import Navbar from "./components/navbar";
+import { useTokenStore } from "./lib/zustand";
+import ClientRoot from "./components/client-root";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,13 +20,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AxiosInterceptor />
-        <GlobalLoading />
-        {children}
-      </body>
-    </html>
+    <ClientRoot className={inter.className}>
+      {children}
+    </ClientRoot>
   );
 }

@@ -92,7 +92,6 @@ export default function Sales() {
       {modalOpen && <UpdatePayment closeModal={closeModal} id={id} paymentType={paymentType} />}
 
       <div className="flex flex-col h-screen">
-        <Navbar />
         <div className="flex flex-row w-full items-start justify-center">
           <div className="w-8/12 p-2">
             <div className="flex flex-row gap-2 mb-2">

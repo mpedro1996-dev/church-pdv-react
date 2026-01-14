@@ -60,7 +60,6 @@ export default function CashFlows() {
 
 
       <div className="flex flex-col h-screen">
-        <Navbar />
         <div className="flex flex-row w-full items-start justify-center">
           <div className="w-8/12 p-2">
 

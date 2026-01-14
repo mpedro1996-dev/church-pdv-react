@@ -207,7 +207,6 @@ export default function CashFlows() {
             {modalOpen && <CloseCash closeModal={closeModal} />}
 
             <div className="flex flex-col h-screen">
-                <Navbar />
                 <div className="flex flex-row w-full items-start justify-center">
                     <div className="w-8/12 p-2">
                         <form className="flex flex-row gap-2 mb-2" onSubmit={handleSubmit(createCashFlow)}>
