@@ -5,7 +5,7 @@ import MainMenuButton from "../components/admin/main-menu-button";
 import { faUser, faChurch, faBox, faShop, faGears } from "@fortawesome/free-solid-svg-icons"
 import Navbar from "../components/navbar";
 
-export default function Page() {
+export default function Admin() {
     return (
         <div className="flex flex-col h-screen">
             <div className="flex flex-row w-full items-start justify-center">

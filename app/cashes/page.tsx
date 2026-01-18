@@ -9,7 +9,7 @@ import Navbar from "../components/navbar";
 import CurrencyFormatter from "../components/currency-formatter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
-import CashRow from "../components/cash-row";
+import CashRow from "../components/cashes/cash-row";
 
 
 export default function CashFlows() {

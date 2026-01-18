@@ -288,6 +288,22 @@ const useCashStore = create<CashState>((set) => ({
   setCashes: (cashes) => set({ cashes: cashes })
 }))
 
+
+interface User {
+  id: number,
+  name: string,
+  userName: string
+}
+interface UserState {
+  users: User[],
+  setUsers: (users: User[]) => void;
+}
+
+const useUserStore = create<UserState>((set) => ({
+  users: [],
+  setUsers: (users) => set({ users: users })
+}));
+
 export {
   useTokenStore,
   useProductStore,
@@ -302,4 +318,5 @@ export {
   useCashFlowStore,
   useCashStore,
   useUiStore,
+  useUserStore
 };

@@ -7,7 +7,7 @@ import CurrencyInput from "../components/currency-input"
 import { useCallback, useEffect, useState } from "react"
 import { api } from "../lib/axios"
 import { useCashFlowStore, usePayValueStore, useTokenStore } from "../lib/zustand"
-import CashFlowRow from "../components/cash-flow-row"
+import CashFlowRow from "../components/cash-flows/cash-flow-row"
 
 import CurrencyFormatter from "../components/currency-formatter"
 import { z } from "zod"
