@@ -1,6 +1,7 @@
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import FlexTableRow from '../../flex-table-row';
 
 interface MinistryRowProps {
     id: number;
@@ -11,7 +12,7 @@ interface MinistryRowProps {
 export default function MinistryRow(props: MinistryRowProps) {
     const { id, name, acronym } = props;
     return (
-        <div className="flex justify-between border-b p-2">
+        <FlexTableRow>
 
             <div className="flex-1 text-left">
                 {props.name}
@@ -28,6 +29,6 @@ export default function MinistryRow(props: MinistryRowProps) {
                     <FontAwesomeIcon icon={faTrash} />
                 </button>
             </div>
-        </div>
+        </FlexTableRow>
     );
 };

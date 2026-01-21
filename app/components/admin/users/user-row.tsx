@@ -2,6 +2,7 @@
 
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import FlexTableRow from "../../flex-table-row";
 
 interface UserRowProps {
     id: number;
@@ -11,7 +12,7 @@ interface UserRowProps {
 
 export default function UserRow({ id, name, username }: UserRowProps) {
     return (
-        <div className="flex flex-row border-b border-zinc-400 p-2 items-center hover:bg-zinc-100">
+        <FlexTableRow>
             <div className="flex-1 text-left">
                 {name}
             </div>
@@ -26,6 +27,6 @@ export default function UserRow({ id, name, username }: UserRowProps) {
                     <FontAwesomeIcon icon={faTrash} />
                 </button>
             </div>
-        </div>
+        </FlexTableRow>
     );
 }

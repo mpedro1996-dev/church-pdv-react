@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRef, useState } from "react";
 import PrintableCourtesy from "../printable-courtesy";
 import { useReactToPrint } from 'react-to-print';
+import FlexTableRow from "../flex-table-row";
 
 interface CourtesyRow {
     id: number,
@@ -47,7 +48,7 @@ export default function CourtesyRow(props: CourtesyRow) {
     return (
         <>
 
-            <div className="flex justify-between border-b p-2">
+            <FlexTableRow>
                 <div className={`flex-1 text-left`}>
                     {props.id}
                 </div>
@@ -66,7 +67,7 @@ export default function CourtesyRow(props: CourtesyRow) {
                 <div className={`flex-1 text-right`}>
                     <button className="border rounded px-2 py-1 bg-blue-600 text-white" type="button" onClick={reprintCourtesy} ><FontAwesomeIcon icon={faPrint} /></button>
                 </div>
-            </div>
+            </FlexTableRow>
             <div className="hidden">
                 <div ref={componentRef}>
                     <PrintableCourtesy id={props.id} ministry={props.ministry} product={props.product} creationDate={formatDate(props.creationDate)} />
