@@ -1,10 +1,6 @@
 'use client'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FlexTableHeaders from "../components/flex-table-headers";
-import FlexTable from "../components/flex-table-headers";
-import FlexTableRow from "../components/flex-table-row";
-import Navbar from "../components/navbar"
-
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import NewCourtesy from "../components/coutersies/new-courtesy";
 import { useCallback, useEffect, useState } from "react";
