@@ -1,4 +1,6 @@
-import ModalEdit from "../../modal-edit"
+import Form from "../../forms/form";
+import FormField from "../../forms/form-field";
+import ModalEdit from "../../forms/modal-edit"
 
 
 
@@ -10,7 +12,12 @@ export default function UserEdit() {
 
     return (
         <ModalEdit onClose={closeModal} title="Editar Usuário">
-            <p>Conteúdo do modal de edição de usuário</p>
+            <Form onSubmit={() => { }}>
+                <FormField>
+                    <label>Nome:</label>
+
+                </FormField>
+            </Form>
 
         </ModalEdit>
     );

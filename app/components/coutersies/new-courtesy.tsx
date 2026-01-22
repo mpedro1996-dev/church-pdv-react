@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import ValidatorMessage from "../validator-message";
 import { api } from "../../lib/axios";
 import { useMinistryStore, useTokenStore, useUiStore } from "../../lib/zustand";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const courtesySchema = z.object({
   ministryId: z.number().int().positive().min(1, "Informe o ministério"),
