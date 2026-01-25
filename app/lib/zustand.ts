@@ -1,5 +1,14 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import User, {
+  Product,
+  SaleItem,
+  Member,
+  Payment,
+  Sale,
+  Ministry,
+  Courtesy
+} from './model';
 
 interface TokenState {
   token: string | null;
@@ -26,13 +35,6 @@ const useTokenStore = create(
   )
 );
 
-interface Product {
-  id: number,
-  name: string,
-  barcode: string,
-  price: number,
-  category: number
-}
 
 
 interface ProductState {
@@ -52,10 +54,7 @@ const useProductStore = create<ProductState>((set) => ({
 }));
 
 
-interface SaleItem {
-  product: Product;
-  quantity: number;
-}
+
 
 interface SaleItemState {
   saleItems: SaleItem[];
@@ -89,20 +88,7 @@ const useSaleItemStore = create(
   )
 );
 
-interface Member {
-  name: string,
-  church: string,
-  phoneNumber: string
-}
 
-interface Payment {
-  receivedValue: number;
-  changeValue: number | null;
-  value: number;
-  paymentType: number | null;
-  member: Member | null;
-  guid: string
-}
 
 interface PaymentState {
   payments: Payment[];
@@ -140,28 +126,6 @@ const usePaymentStore = create(
   )
 );
 
-interface SaleItemResponse {
-  name: string,
-  unitPrice: number,
-  quantity: number
-}
-
-export interface PaymentResponse {
-  id: number,
-  paymentType: number,
-  value: number,
-  canUpdate: boolean,
-  member: Member | null
-}
-
-export interface Sale {
-  id: number;
-  code: string;
-  saleItems: SaleItemResponse[];
-  payments: PaymentResponse[];
-  creationDate: Date;
-  canCancel: boolean;
-}
 
 interface SaleState {
   sales: Sale[];
@@ -212,11 +176,7 @@ const useUiStore = create<UIState>((set) => ({
   setLoading: (loading: boolean, message: string | null = null) => set({ loading, message }),
 }));
 
-interface Ministry {
-  id: number,
-  name: string,
-  acronym: string
-}
+
 
 interface MinistryState {
   ministries: Ministry[]
@@ -229,13 +189,7 @@ const useMinistryStore = create<MinistryState>((set) => ({
 }))
 
 
-interface Courtesy {
-  id: number,
-  ministry: string,
-  product: string,
-  quantity: number,
-  creationDate: Date
-}
+
 
 interface CourtesyState {
   courtesies: Courtesy[],
@@ -289,11 +243,7 @@ const useCashStore = create<CashState>((set) => ({
 }))
 
 
-interface User {
-  id: number,
-  name: string,
-  userName: string
-}
+
 interface UserState {
   users: User[],
   setUsers: (users: User[]) => void;
@@ -323,5 +273,5 @@ export {
   useCashFlowStore,
   useCashStore,
   useUiStore,
-  useUserStore
+  useUserStore, Sale,
 };
