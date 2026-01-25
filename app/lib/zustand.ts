@@ -222,6 +222,7 @@ const useCashFlowStore = create<CashFlowState>((set) => ({
 export interface Cash {
   cashFlows: CashFlow[],
   cashValue: number,
+  product: Product;
   debitValue: number,
   creditValue: number,
   pixValue: number,
@@ -273,5 +274,5 @@ export {
   useCashFlowStore,
   useCashStore,
   useUiStore,
-  useUserStore, Sale,
+  useUserStore
 };
