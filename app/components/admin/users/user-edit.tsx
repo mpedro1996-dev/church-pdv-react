@@ -43,6 +43,8 @@ export default function UserEdit(props: UserEditProps) {
     useEffect(() => {
 
         if (!isEditing || !userId) {
+            reset({ name: '', username: '' });
+
             setName('');
             setUsername('');
             return;
@@ -55,6 +57,10 @@ export default function UserEdit(props: UserEditProps) {
 
         setName(user.name);
         setUsername(user.userName);
+
+        reset(
+            { name: user.name ?? '', username: user.userName ?? '' }
+        );
     }, [isEditing, userId, users]);
 
 
@@ -63,8 +69,11 @@ export default function UserEdit(props: UserEditProps) {
 
     }
 
-    const { handleSubmit, register, formState: { errors } } = useForm<UserFormData>({
-        resolver: zodResolver(userSchema)
+    const { handleSubmit, register, reset, formState: { errors } } = useForm<UserFormData>({
+        resolver: zodResolver(userSchema), defaultValues: {
+            name: '',
+            username: ''
+        }
     });
 
     async function save(data: UserFormData) {
@@ -125,12 +134,12 @@ export default function UserEdit(props: UserEditProps) {
             <Form onSubmit={handleSubmit(save)}>
                 <FormField>
                     <label>Nome:</label>
-                    <Input register={register("name")} name="name" type="text" value={name} />
+                    <Input register={register("name")} name="name" type="text" value={name} onChange={e => setName(e.target.value)} />
                     {errors.name && <ValidatorMessage>{errors.name.message}</ValidatorMessage>}
                 </FormField>
                 <FormField>
                     <label>Nome de usuário:</label>
-                    <Input register={register("username")} name="username" type="text" value={username} />
+                    <Input register={register("username")} name="username" type="text" value={username} onChange={e => setUsername(e.target.value)} />
                     {errors.username && <ValidatorMessage>{errors.username.message}</ValidatorMessage>}
                 </FormField>
                 <FormFooter>
