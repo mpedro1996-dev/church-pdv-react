@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { use, useEffect, useState } from "react";
 import UserEdit from "@/app/components/admin/users/user-edit";
 import User from "@/app/lib/model";
+import ResetPassword from "@/app/components/admin/users/reset-password";
 
 export default function Users() {
 
@@ -17,12 +18,18 @@ export default function Users() {
     const { users, setUsers } = useUserStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
+    const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
     const handleEditUser = (userId: number) => {
         setSelectedUserId(userId);
         setModalOpen(true);
     };
+
+    const handleResetPassword = (userId: number) => {
+        setSelectedUserId(userId);
+        setResetPasswordModalOpen(true);
+    }
 
     async function handleOnChangeActive(userId: number) {
         const user = users.find(u => u.id === userId);
@@ -68,6 +75,11 @@ export default function Users() {
         setModalOpen(false);
     };
 
+    const handleCloseResetPasswordModal = () => {
+        setSelectedUserId(null);
+        setResetPasswordModalOpen(false);
+    };
+
     const filteredUsers = users.filter(user =>
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.userName.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -108,6 +120,7 @@ export default function Users() {
     return (
         <>
             {modalOpen && <UserEdit isEditing={selectedUserId !== null} onClose={handleCloseModal} userId={selectedUserId} />}
+            {resetPasswordModalOpen && <ResetPassword userId={selectedUserId} onClose={handleCloseResetPasswordModal} />}
 
             <div className="flex flex-col h-screen">
                 <div className="flex flex-1">
@@ -125,7 +138,7 @@ export default function Users() {
                         <div className="mx-2 rounded border-t border-r border-l">
                             <FlexTableHeaders headers={headers} hasActionButton={true} />
                             {filteredUsers.map((user) => (
-                                <UserRow key={user.id} user={user} onEdit={handleEditUser} onChangeActive={handleOnChangeActive} />
+                                <UserRow key={user.id} user={user} onEdit={handleEditUser} onChangeActive={handleOnChangeActive} onResetPassword={handleResetPassword} />
                             ))}
                         </div>
                     </main>

@@ -1,6 +1,6 @@
 'use client';
 
-import { faEdit, faLock, faTrash, faUnlock } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faKey, faLock, faTrash, faUnlock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FlexTableRow from "../../flex-table-row";
 import User from "@/app/lib/model";
@@ -9,10 +9,11 @@ interface UserRowProps {
     user: User
     onEdit: (id: number) => void;
     onChangeActive: (id: number) => void;
+    onResetPassword: (id: number) => void;
 
 }
 
-export default function UserRow({ user, onEdit, onChangeActive }: UserRowProps) {
+export default function UserRow({ user, onEdit, onChangeActive, onResetPassword }: UserRowProps) {
     return (
         <FlexTableRow active={user.active}>
             <div className="flex-1 text-left">
@@ -36,6 +37,10 @@ export default function UserRow({ user, onEdit, onChangeActive }: UserRowProps) 
                         <FontAwesomeIcon icon={faUnlock} onClick={() => onChangeActive(user.id)} />
                     </button>
                 }
+
+                <button type="button" className="text-black hover:text-gray-500">
+                    <FontAwesomeIcon icon={faKey} onClick={() => onResetPassword(user.id)} />
+                </button>
             </div>
         </FlexTableRow>
     );
