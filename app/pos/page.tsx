@@ -1,6 +1,4 @@
 'use client'
-
-import Navbar from "../components/navbar";
 import Cart from "../components/pos/cart";
 import Product from "../components/pos/product";
 import { faWallet } from "@fortawesome/free-solid-svg-icons"
@@ -24,11 +22,6 @@ export default function Sale() {
 
   useEffect(() => {
     async function GetProducts() {
-
-      if (!token) {
-        console.error('No token found');
-        return;
-      }
 
       try {
         const response = await api.get('/api/products', {

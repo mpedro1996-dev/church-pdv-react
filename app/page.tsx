@@ -7,8 +7,6 @@ import Input from './components/input';
 import ValidatorMessage from './components/validator-message';
 import { useTokenStore, useSaleItemStore, usePayValueStore, usePaymentStore } from './lib/zustand';
 import { useRouter } from 'next/navigation';
-
-import { useState } from 'react';
 import CurrencyInput from './components/currency-input';
 
 
