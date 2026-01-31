@@ -2,8 +2,10 @@
 
 import { faEdit, faKey, faLock, faTrash, faUnlock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import FlexTableRow from "../../flex-table-row";
+import FlexTableRow from "../../flex-table/flex-table-row";
 import User from "@/app/lib/model";
+import ActivateButtons from "../../flex-table/activate-buttons";
+import ActionButton from "../../flex-table/action-button";
 
 interface UserRowProps {
     user: User
@@ -23,25 +25,16 @@ export default function UserRow({ user, onEdit, onChangeActive, onResetPassword 
                 {user.userName}
             </div>
             <div className="flex-1 text-right space-x-1">
-                <button type="button" className="text-blue-600 hover:text-blue-800" onClick={() => onEdit(user.id)}>
+                <ActionButton onAction={() => onEdit(user.id)}>
                     <FontAwesomeIcon icon={faEdit} />
-                </button>
-                {user.active &&
-                    <button type="button" className="text-red-600 hover:text-red-800">
-                        <FontAwesomeIcon icon={faLock} onClick={() => onChangeActive(user.id)} />
-                    </button>
-                }
+                </ActionButton>
 
-                {!user.active &&
-                    <button type="button" className="text-green-600 hover:text-green-800">
-                        <FontAwesomeIcon icon={faUnlock} onClick={() => onChangeActive(user.id)} />
-                    </button>
-                }
+                <ActivateButtons active={user.active} onChangeActive={() => onChangeActive(user.id)} />
 
-                <button type="button" className="text-black hover:text-gray-500">
-                    <FontAwesomeIcon icon={faKey} onClick={() => onResetPassword(user.id)} />
-                </button>
+                <ActionButton className="text-black hover:text-gray-500" onAction={() => onResetPassword(user.id)}>
+                    <FontAwesomeIcon icon={faKey} />
+                </ActionButton>
             </div>
-        </FlexTableRow>
+        </FlexTableRow >
     );
 }

@@ -35,7 +35,7 @@ export default function Login() {
     async function login(data: LoginFormData) {
 
         try {
-            const response = await api.post('/api/login', { ...data, openValue: payValue });
+            const response = await api.post('/api/auth', { ...data, openValue: payValue });
             const result = response.data;
 
 

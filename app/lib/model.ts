@@ -8,7 +8,8 @@ export default interface User {
 export interface Ministry {
     id: number,
     name: string,
-    acronym: string
+    acronym: string,
+    active: boolean
 }
 
 export interface Product {

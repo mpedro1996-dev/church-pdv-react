@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRef, useState } from "react";
 import PrintableCourtesy from "../printable-courtesy";
 import { useReactToPrint } from 'react-to-print';
-import FlexTableRow from "../flex-table-row";
+import FlexTableRow from "../flex-table/flex-table-row";
 
 interface CourtesyRow {
     id: number,

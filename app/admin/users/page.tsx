@@ -2,7 +2,7 @@
 
 import UserRow from "@/app/components/admin/users/user-row";
 import NavMenu from "@/app/components/admin/navmenu";
-import FlexTableHeaders from "@/app/components/flex-table-headers";
+import FlexTableHeaders from "@/app/components/flex-table/flex-table-headers";
 import { api } from "@/app/lib/axios";
 import { useUserStore, useTokenStore } from "@/app/lib/zustand";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -119,7 +119,7 @@ export default function Users() {
 
     return (
         <>
-            {modalOpen && <UserEdit isEditing={selectedUserId !== null} onClose={handleCloseModal} userId={selectedUserId} />}
+            {modalOpen && <UserEdit isEditing={selectedUserId !== null} onClose={handleCloseModal} id={selectedUserId} />}
             {resetPasswordModalOpen && <ResetPassword userId={selectedUserId} onClose={handleCloseResetPasswordModal} />}
 
             <div className="flex flex-col h-screen">
@@ -138,7 +138,7 @@ export default function Users() {
                         <div className="mx-2 rounded border-t border-r border-l">
                             <FlexTableHeaders headers={headers} hasActionButton={true} />
                             {filteredUsers.map((user) => (
-                                <UserRow key={user.id} user={user} onEdit={handleEditUser} onChangeActive={handleOnChangeActive} onResetPassword={handleResetPassword} />
+                                <UserRow key={user.id} user={user} onEdit={handleEditUser} onChangeActive={() => handleOnChangeActive(user.id)} onResetPassword={handleResetPassword} />
                             ))}
                         </div>
                     </main>

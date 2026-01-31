@@ -1,4 +1,4 @@
-import User from "@/app/lib/model";
+import User, { Ministry } from "@/app/lib/model";
 import Form from "../../forms/form";
 import FormField from "../../forms/form-field";
 import ModalEdit from "../../forms/modal-edit"
@@ -12,56 +12,56 @@ import ConfirmButton from "../../forms/confirm-button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { api } from "@/app/lib/axios";
-import { useTokenStore, useUserStore } from "@/app/lib/zustand";
+import { useMinistryStore, useTokenStore } from "@/app/lib/zustand";
 import { useEffect, useState } from "react";
 
 
-interface UserEditProps {
+interface MinistryEditProps {
 
     isEditing: boolean;
     id: number | null;
     onClose: () => void;
 };
 
-const userSchema = z.object({
+const ministrySchema = z.object({
     name: z.string().min(3, "Informe o nome"),
-    username: z.string().min(3, "Informe nome de usuário"),
+    acronym: z.string().min(3, "Informe acrônimo"),
 });
 
-type UserFormData = z.infer<typeof userSchema>
+type MinistryFormData = z.infer<typeof ministrySchema>
 
 
-export default function UserEdit(props: UserEditProps) {
+export default function UserEdit(props: MinistryEditProps) {
 
     const { token } = useTokenStore();
-    const { users, setUsers } = useUserStore();
+    const { ministries, setMinistries } = useMinistryStore();
     const { isEditing, id } = props;
 
     const [name, setName] = useState('');
-    const [username, setUsername] = useState('');
+    const [acronym, setAcronym] = useState('');
 
     useEffect(() => {
 
         if (!isEditing || !id) {
-            reset({ name: '', username: '' });
+            reset({ name: '', acronym: '' });
 
             setName('');
-            setUsername('');
+            setAcronym('');
             return;
         }
 
 
-        const user = users.find(u => u.id === id);
+        const ministry = ministries.find(m => m.id === id);
 
-        if (!user) return;
+        if (!ministry) return;
 
-        setName(user.name);
-        setUsername(user.userName);
+        setName(ministry.name);
+        setAcronym(ministry.acronym);
 
         reset(
-            { name: user.name ?? '', username: user.userName ?? '' }
+            { name: ministry.name ?? '', acronym: ministry.acronym ?? '' }
         );
-    }, [isEditing, id, users]);
+    }, [isEditing, id, ministries]);
 
 
     const closeModal = () => {
@@ -69,17 +69,16 @@ export default function UserEdit(props: UserEditProps) {
 
     }
 
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<UserFormData>({
-        resolver: zodResolver(userSchema), defaultValues: {
+    const { handleSubmit, register, reset, formState: { errors } } = useForm<MinistryFormData>({
+        resolver: zodResolver(ministrySchema), defaultValues: {
             name: '',
-            username: ''
+            acronym: ''
         }
     });
 
-    async function save(data: UserFormData) {
-
+    async function save(data: MinistryFormData) {
         const create = () => {
-            const response = api.post('/api/users', data,
+            const response = api.post('/api/ministries', data,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -90,7 +89,7 @@ export default function UserEdit(props: UserEditProps) {
         }
 
         const update = () => {
-            const response = api.put(`/api/users/${props.id}`, data,
+            const response = api.put(`/api/ministries/${props.id}`, data,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -107,14 +106,14 @@ export default function UserEdit(props: UserEditProps) {
 
             if (result.isSuccess) {
                 if (props.isEditing) {
-                    const updatedUser: User = result.value;
-                    const updatedUsers = users.map(user =>
-                        user.id === updatedUser.id ? updatedUser : user
+                    const updatedMinistry: Ministry = result.value;
+                    const updatedMinistries = ministries.map(ministry =>
+                        ministry.id === updatedMinistry.id ? updatedMinistry : ministry
                     );
-                    setUsers(updatedUsers);
+                    setMinistries(updatedMinistries);
                 } else {
-                    const newUser: User = result.value;
-                    setUsers([...users, newUser]);
+                    const newMinistry: Ministry = result.value;
+                    setMinistries([...ministries, newMinistry]);
                 }
 
                 closeModal();
@@ -130,7 +129,7 @@ export default function UserEdit(props: UserEditProps) {
 
 
     return (
-        <ModalEdit onClose={closeModal} title={props.isEditing ? "Editar Usuário" : "Novo Usuário"}>
+        <ModalEdit onClose={closeModal} title={props.isEditing ? "Editar Ministério" : "Novo Ministério"}>
             <Form onSubmit={handleSubmit(save)}>
                 <FormField>
                     <label>Nome:</label>
@@ -138,9 +137,9 @@ export default function UserEdit(props: UserEditProps) {
                     {errors.name && <ValidatorMessage>{errors.name.message}</ValidatorMessage>}
                 </FormField>
                 <FormField>
-                    <label>Nome de usuário:</label>
-                    <Input register={register("username")} name="username" type="text" value={username} onChange={e => setUsername(e.target.value)} />
-                    {errors.username && <ValidatorMessage>{errors.username.message}</ValidatorMessage>}
+                    <label>Acrônimo:</label>
+                    <Input register={register("acronym")} name="acronym" type="text" value={acronym} onChange={e => setAcronym(e.target.value)} />
+                    {errors.acronym && <ValidatorMessage>{errors.acronym.message}</ValidatorMessage>}
                 </FormField>
                 <FormFooter>
                     <ConfirmButton><FontAwesomeIcon icon={faSave} />Salvar</ConfirmButton>
