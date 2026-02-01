@@ -4,18 +4,16 @@ import { faBarcode, faPlus, faMinus } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react";
 import { useSaleItemStore } from "../../lib/zustand";
+import { Product as ProductModel } from "@/app/lib/model";
 
 
 interface ProductProps {
-    name: string;
-    barcode: string,
-    unitPrice: number,
-    id: number,
-    category: number
+    product: ProductModel;
 }
 
 export default function Product(props: ProductProps) {
 
+    const product = props.product;
     const [quantity, setQuantity] = useState(0);
     const [isSaleItem, setIsSaleItem] = useState(false);
     const { saleItems, addSaleItem, removeSaleItem, alterQuantity } = useSaleItemStore();
@@ -27,11 +25,11 @@ export default function Product(props: ProductProps) {
 
         if (qty === 1) {
             addSaleItem({
-                product: { id: props.id, name: props.name, barcode: props.barcode, category: props.category, price: props.unitPrice },
+                product: product,
                 quantity: qty
             })
         } else {
-            alterQuantity(props.id, qty)
+            alterQuantity(product.id, qty)
         }
     }
 
@@ -40,16 +38,16 @@ export default function Product(props: ProductProps) {
         setQuantity(qty);
 
         if (qty === 0) {
-            removeSaleItem(props.id)
+            removeSaleItem(product.id)
         }
         else {
-            alterQuantity(props.id, qty)
+            alterQuantity(product.id, qty)
         }
     }
 
     useEffect(() => {
 
-        var item = saleItems.find((saleItem) => saleItem.product.id === props.id);
+        var item = saleItems.find((saleItem) => saleItem.product.id === product.id);
 
         if (!item) {
             setIsSaleItem(false);
@@ -61,7 +59,7 @@ export default function Product(props: ProductProps) {
 
 
 
-    }, [saleItems, props.id])
+    }, [saleItems, product])
 
 
 
@@ -69,13 +67,13 @@ export default function Product(props: ProductProps) {
         <div className="flex flex-col w-100 border rounded">
             <div className="p-2">
                 <div className="flex font-bold text-sm">
-                    {props.name}
+                    {product.name}
                 </div>
                 <div className="flex items-center gap-1 text-sm">
-                    <FontAwesomeIcon icon={faBarcode} />Codigo: {props.barcode}
+                    <FontAwesomeIcon icon={faBarcode} />Codigo: {product.barcode}
                 </div>
                 <div className="flex text-sm">
-                    <CurrencyFormatter value={props.unitPrice} />
+                    <CurrencyFormatter value={product.price} />
                 </div>
             </div>
             {isSaleItem === false ? (

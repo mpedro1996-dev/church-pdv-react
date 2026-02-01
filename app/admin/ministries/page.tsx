@@ -71,7 +71,6 @@ export default function Ministries() {
 
     async function handleOnChangeActive(ministryId: number) {
 
-        console.log('handleOnChangeActive', ministryId);
         const ministry = ministries.find(m => m.id === ministryId);
         if (!ministry) return;
 

@@ -1,4 +1,4 @@
-export default interface User {
+export interface User {
     id: number,
     name: string,
     userName: string,
@@ -17,7 +17,9 @@ export interface Product {
     name: string,
     barcode: string,
     price: number,
-    category: number
+    category: number,
+    active: boolean,
+    canEmitCourtesy: boolean
 }
 
 export interface SaleItem {

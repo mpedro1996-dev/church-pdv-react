@@ -76,7 +76,7 @@ export default function Sale() {
             <div className="overflow-y-scroll">
               <div className="grid grid-flow-rows grid-cols-3 md:grid-cols-4 lg:grid-cols-6 p-2 gap-2 ">
                 {filteredProducts.map((product) => (
-                  <Product key={product.id} id={product.id} category={product.category} name={product.name} barcode={product.barcode} unitPrice={product.price} />
+                  <Product key={product.id} product={product} />
                 ))}
 
               </div>
