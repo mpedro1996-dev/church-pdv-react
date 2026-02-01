@@ -48,7 +48,7 @@ export default function CourtesyRow(props: CourtesyRow) {
     return (
         <>
 
-            <FlexTableRow>
+            <FlexTableRow active={true}>
                 <div className={`flex-1 text-left`}>
                     {props.id}
                 </div>
