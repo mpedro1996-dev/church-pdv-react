@@ -1,6 +1,7 @@
 'use client';
 
 import NavMenu from "@/app/components/admin/navmenu";
+import ProductEdit from "@/app/components/admin/products/product-edit";
 import ProductRow from "@/app/components/admin/products/product-row";
 import FlexTableHeaders from "@/app/components/flex-table/flex-table-headers";
 import { api } from "@/app/lib/axios";
@@ -65,7 +66,7 @@ export default function Products() {
 
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (product.barcode && product.barcode == searchTerm)
+        (product.barcode && product.barcode == Number(searchTerm))
     );
 
 
@@ -111,27 +112,31 @@ export default function Products() {
 
 
     return (
-        <div className="flex flex-col h-screen">
-            <div className="flex flex-1">
-                <aside className="w-72 flex flex-col border rounded m-1">
-                    <NavMenu selected="products" />
-                </aside>
-                <main className="flex-1 flex flex-col border rounded p-2 m-1">
-                    <div className="flex mx-2">
-                        <label> Buscar:</label>
-                    </div>
-                    <div className="flex flex-row mb-2 mx-2 gap-1">
-                        <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} type="text" name="ministry-search" className="rounded border border-zinc-400 shadow-sm w-auto grow h-10 px-2" />
-                        <button type="button" className="text-white bg-green-600 border rounded border-green-400 p-2 flex items-center gap-1 w-auto" onClick={() => setModalOpen(true)}><FontAwesomeIcon icon={faPlus} />Novo Produto</button>
-                    </div>
-                    <div className="mx-2 rounded border-t border-r border-l">
-                        <FlexTableHeaders headers={headers} hasActionButton={true} />
-                        {filteredProducts.map((product) => (
-                            <ProductRow key={product.id} product={product} onChangeActive={() => handleOnChangeActive(product.id)} onEdit={handleEditProduct} />
-                        ))}
-                    </div>
-                </main>
+        <>
+            {modalOpen && <ProductEdit isEditing={selectedProductId !== null} onClose={handleCloseModal} id={selectedProductId} />}
+
+            <div className="flex flex-col h-screen">
+                <div className="flex flex-1">
+                    <aside className="w-72 flex flex-col border rounded m-1">
+                        <NavMenu selected="products" />
+                    </aside>
+                    <main className="flex-1 flex flex-col border rounded p-2 m-1">
+                        <div className="flex mx-2">
+                            <label> Buscar:</label>
+                        </div>
+                        <div className="flex flex-row mb-2 mx-2 gap-1">
+                            <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} type="text" name="ministry-search" className="rounded border border-zinc-400 shadow-sm w-auto grow h-10 px-2" />
+                            <button type="button" className="text-white bg-green-600 border rounded border-green-400 p-2 flex items-center gap-1 w-auto" onClick={() => setModalOpen(true)}><FontAwesomeIcon icon={faPlus} />Novo Produto</button>
+                        </div>
+                        <div className="mx-2 rounded border-t border-r border-l">
+                            <FlexTableHeaders headers={headers} hasActionButton={true} />
+                            {filteredProducts.map((product) => (
+                                <ProductRow key={product.id} product={product} onChangeActive={() => handleOnChangeActive(product.id)} onEdit={handleEditProduct} />
+                            ))}
+                        </div>
+                    </main>
+                </div>
             </div>
-        </div>
+        </>
     );
 }

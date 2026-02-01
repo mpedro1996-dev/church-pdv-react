@@ -45,7 +45,7 @@ export default function Sale() {
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.barcode && product.barcode == searchTerm)
+    (product.barcode && product.barcode == Number(searchTerm))
   );
 
   const isDisabled = saleItems.length === 0;
