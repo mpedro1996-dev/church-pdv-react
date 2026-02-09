@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export interface User {
     id: number,
     name: string,
@@ -72,5 +74,17 @@ export interface Courtesy {
     product: string,
     quantity: number,
     creationDate: Date
+}
+
+export interface Shop {
+    id: number,
+    name: string,
+    logo: string,
+    active: boolean
+}
+
+export interface Theme {
+    name: string,
+    image: string
 }
 

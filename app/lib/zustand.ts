@@ -7,7 +7,8 @@ import User, {
   Payment,
   Sale,
   Ministry,
-  Courtesy
+  Courtesy,
+  Shop
 } from './model';
 
 interface TokenState {
@@ -188,6 +189,16 @@ const useMinistryStore = create<MinistryState>((set) => ({
   setMinistries: (ministries) => set({ ministries: ministries })
 }))
 
+interface ShopState {
+  shops: Shop[]
+  setShops: (shops: Shop[]) => void
+}
+
+const useShopStore = create<ShopState>((set) => ({
+  shops: [],
+  setShops: (shops) => set({ shops: shops })
+}))
+
 
 
 
@@ -274,5 +285,6 @@ export {
   useCashFlowStore,
   useCashStore,
   useUiStore,
-  useUserStore
+  useUserStore,
+  useShopStore
 };

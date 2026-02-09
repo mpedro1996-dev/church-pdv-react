@@ -1,0 +1,24 @@
+{
+    "themes": [
+        {
+            "name": "Marketing Congregacional",
+            "image": "mkg.jpg"
+        },
+        {
+            "name": "Por +70 anos de avivamento",
+            "image": "avivamento.jpg"
+        },
+        {
+            "name": "Remanescentes",
+            "image": "remanescentes.jpg"
+        },
+        {
+            "name": "Posicionadas para conquistar o céu",
+            "image": "posicionadas.jpg"
+        },
+        {
+            "name": "Rendição",
+            "image": "rendicao.jpg"
+        }
+    ]
+}
