@@ -1,6 +1,6 @@
 import NavLink from './navlink';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCashRegister, faStore, faRightFromBracket, faTicket, faScaleBalanced, faBriefcase, faGears } from '@fortawesome/free-solid-svg-icons';
+import { faCashRegister, faStore, faTicket, faScaleBalanced, faBriefcase, faGears } from '@fortawesome/free-solid-svg-icons';
 
 
 

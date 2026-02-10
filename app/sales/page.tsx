@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { api } from "../lib/axios"
-import { useSaleStore, useTokenStore } from "../lib/zustand"
+import { useSaleStore, useSessionStore } from "../lib/zustand"
 
 import SaleRow from "../components/sales/sale-row"
 import UpdatePayment from "../components/sales/update-payment"
 
 export default function Sales() {
 
-  const { token } = useTokenStore();
+  const { session } = useSessionStore();
 
   const [code, setCode] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -36,15 +36,15 @@ export default function Sales() {
 
   const GetSales = useCallback(async () => {
 
-    if (!token) {
+    if (!session?.token) {
       console.error('No token found');
       return;
     }
 
     try {
-      const response = await api.get('/api/sales', {
+      const response = await api.get(`/api/sales/shop/${session?.shopId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session?.token}`,
         },
       });
 
@@ -59,7 +59,7 @@ export default function Sales() {
     } catch (error) {
       console.error('GetSales failed!', error);
     }
-  }, [token, setSales])
+  }, [session?.token, setSales])
 
 
 

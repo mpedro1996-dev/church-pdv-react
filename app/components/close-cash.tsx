@@ -2,9 +2,8 @@ import { faLock, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { defaultErrorMap } from "zod";
 import { api } from "../lib/axios";
-import { Cash, Sale, useTokenStore, useUiStore } from "../lib/zustand";
+import { Cash, useSessionStore, useUiStore } from "../lib/zustand";
 import { useRouter } from 'next/navigation';
 import PrintableSale from "@/app/components/printable-sale";
 import PrintableCash from "@/app/components/printable-cash";
@@ -28,7 +27,7 @@ export default function CloseCash(props: CloseCashProps) {
     const [creditValue, setCreditValue] = useState(0);
     const [pixValue, setPixValue] = useState(0);
     const [consumptionValue, setConsumptionValue] = useState(0);
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const router = useRouter();
 
     const [cashData, setCashData] = useState<Cash | null>(null);
@@ -121,12 +120,13 @@ export default function CloseCash(props: CloseCashProps) {
             creditValue: creditValue,
             pixValue: pixValue,
             consumptionValue: consumptionValue,
+            shopId: session?.shopId
         };
 
         try {
             const response = await api.post('/api/cashes', data, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${session?.token}`,
                 },
             });
             const result = response.data;

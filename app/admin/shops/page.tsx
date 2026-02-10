@@ -6,14 +6,14 @@ import ShopRow from "@/app/components/admin/shops/shop-row";
 import FlexTableHeaders from "@/app/components/flex-table/flex-table-headers";
 import { api } from "@/app/lib/axios";
 import { Shop } from "@/app/lib/model";
-import { useShopStore, useTokenStore } from "@/app/lib/zustand";
+import { useShopStore, useSessionStore } from "@/app/lib/zustand";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
 export default function Shops() {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { shops, setShops } = useShopStore();
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -41,7 +41,7 @@ export default function Shops() {
     useEffect(() => {
         async function GetShops() {
 
-            if (!token) {
+            if (!session?.token) {
                 console.error('No token found');
                 return;
             }
@@ -49,7 +49,7 @@ export default function Shops() {
             try {
                 const response = await api.get('/api/shops', {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${session?.token}`,
                     },
                 });
 
@@ -64,7 +64,7 @@ export default function Shops() {
         }
 
         GetShops();
-    }, [token, setShops]);
+    }, [session?.token, setShops]);
 
 
     async function handleOnChangeActive(shopId: number) {
@@ -78,7 +78,7 @@ export default function Shops() {
             const response = api.delete(`/api/shops/${shopId}/${method}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

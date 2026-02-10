@@ -4,7 +4,7 @@ import FlexTableHeaders from "../components/flex-table/flex-table-headers";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import NewCourtesy from "../components/coutersies/new-courtesy";
 import { useCallback, useEffect, useState } from "react";
-import { useCourtesyStore, useTokenStore } from "../lib/zustand";
+import { useCourtesyStore, useSessionStore } from "../lib/zustand";
 import { api } from "../lib/axios";
 import CourtesyRow from "../components/coutersies/courtesy-row";
 
@@ -18,7 +18,7 @@ interface Courtesy {
 export default function Courtesies() {
 
   const [modalOpen, setModalOpen] = useState(false);
-  const { token } = useTokenStore();
+  const { session } = useSessionStore();
   const { courtesies, setCourtesies } = useCourtesyStore();
 
   const openModal = () => setModalOpen(true);
@@ -38,7 +38,7 @@ export default function Courtesies() {
   ];
 
   const GetCourtesies = useCallback(async () => {
-    if (!token) {
+    if (!session?.token) {
       console.error('No token found');
       return;
     }
@@ -46,7 +46,7 @@ export default function Courtesies() {
     try {
       const response = await api.get('/api/courtesies', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session.token}`,
         },
       });
 
@@ -58,7 +58,7 @@ export default function Courtesies() {
     } catch (error) {
       console.error('GetCourtesies failed!', error);
     }
-  }, [token, setCourtesies])
+  }, [session?.token, setCourtesies])
 
   useEffect(() => {
     GetCourtesies();

@@ -4,17 +4,17 @@ import UserRow from "@/app/components/admin/users/user-row";
 import NavMenu from "@/app/components/admin/navmenu";
 import FlexTableHeaders from "@/app/components/flex-table/flex-table-headers";
 import { api } from "@/app/lib/axios";
-import { useUserStore, useTokenStore } from "@/app/lib/zustand";
+import { useUserStore, useSessionStore } from "@/app/lib/zustand";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import UserEdit from "@/app/components/admin/users/user-edit";
-import User from "@/app/lib/model";
+import { User } from "@/app/lib/model";
 import ResetPassword from "@/app/components/admin/users/reset-password";
 
 export default function Users() {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { users, setUsers } = useUserStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
@@ -41,7 +41,7 @@ export default function Users() {
             const response = api.delete(`/api/users/${userId}/${method}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );
@@ -92,7 +92,7 @@ export default function Users() {
     useEffect(() => {
         async function GetUsers() {
 
-            if (!token) {
+            if (!session?.token) {
                 console.error('No token found');
                 return;
             }
@@ -100,7 +100,7 @@ export default function Users() {
             try {
                 const response = await api.get('/api/users', {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${session?.token}`,
                     },
                 });
 
@@ -115,7 +115,7 @@ export default function Users() {
         }
 
         GetUsers();
-    }, [token, setUsers]);
+    }, [session?.token, setUsers]);
 
     return (
         <>

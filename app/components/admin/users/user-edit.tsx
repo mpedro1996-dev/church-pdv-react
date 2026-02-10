@@ -1,4 +1,4 @@
-import User from "@/app/lib/model";
+import { User } from "@/app/lib/model";
 import Form from "../../forms/form";
 import FormField from "../../forms/form-field";
 import ModalEdit from "../../forms/modal-edit"
@@ -12,7 +12,7 @@ import ConfirmButton from "../../forms/confirm-button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { api } from "@/app/lib/axios";
-import { useTokenStore, useUserStore } from "@/app/lib/zustand";
+import { useSessionStore, useUserStore } from "@/app/lib/zustand";
 import { useEffect, useState } from "react";
 
 
@@ -33,7 +33,7 @@ type UserFormData = z.infer<typeof userSchema>
 
 export default function UserEdit(props: UserEditProps) {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { users, setUsers } = useUserStore();
     const { isEditing, id } = props;
 
@@ -82,7 +82,7 @@ export default function UserEdit(props: UserEditProps) {
             const response = api.post('/api/users', data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );
@@ -93,7 +93,7 @@ export default function UserEdit(props: UserEditProps) {
             const response = api.put(`/api/users/${props.id}`, data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

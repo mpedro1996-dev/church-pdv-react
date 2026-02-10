@@ -1,4 +1,4 @@
-import User from "@/app/lib/model";
+import { User } from "@/app/lib/model";
 import Form from "../../forms/form";
 import FormField from "../../forms/form-field";
 import ModalEdit from "../../forms/modal-edit"
@@ -12,7 +12,7 @@ import ConfirmButton from "../../forms/confirm-button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { api } from "@/app/lib/axios";
-import { useTokenStore, useUserStore } from "@/app/lib/zustand";
+import { useSessionStore, useUserStore } from "@/app/lib/zustand";
 import { useEffect, useState } from "react";
 
 
@@ -35,7 +35,7 @@ type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
 
 export default function ResetPassword(props: ResetPasswordProps) {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { users, setUsers } = useUserStore();
     const { userId } = props;
 
@@ -77,7 +77,7 @@ export default function ResetPassword(props: ResetPasswordProps) {
             const response = api.put(`/api/users/${props.userId}/reset-password`, data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

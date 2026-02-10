@@ -1,4 +1,4 @@
-import { faPlus, faSave, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "../input";
 import { z } from "zod";
@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ValidatorMessage from "../validator-message";
 import { api } from "../../lib/axios";
-import { useMinistryStore, useProductStore, useTokenStore, useUiStore } from "../../lib/zustand";
+import { useMinistryStore, useProductStore, useSessionStore } from "../../lib/zustand";
 import { useEffect } from "react";
 import ModalEdit from "../forms/modal-edit";
 import Form from "../forms/form";
@@ -28,7 +28,7 @@ interface NewCourtesyProps {
 
 export default function NewCourtesy(props: NewCourtesyProps) {
 
-  const { token } = useTokenStore();
+  const { session } = useSessionStore();
   const { ministries, setMinistries } = useMinistryStore();
   const { products, setProducts } = useProductStore();
 
@@ -38,7 +38,7 @@ export default function NewCourtesy(props: NewCourtesyProps) {
       try {
         const response = await api.get('/api/ministries', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${session?.token}`,
           },
         });
 
@@ -57,7 +57,7 @@ export default function NewCourtesy(props: NewCourtesyProps) {
       try {
         const response = await api.get('/api/products', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${session?.token}`,
           },
         });
 
@@ -73,7 +73,7 @@ export default function NewCourtesy(props: NewCourtesyProps) {
 
     GetMinistries();
     GetProducts();
-  }, [token, setMinistries, setProducts]);
+  }, [session?.token, setMinistries, setProducts]);
 
   const { handleSubmit, register, formState: { errors } } = useForm<CourtesyFormData>({
     resolver: zodResolver(courtesySchema)
@@ -85,7 +85,7 @@ export default function NewCourtesy(props: NewCourtesyProps) {
       const response = await api.post('/api/courtesies', data,
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${session?.token}`
           }
         }
       );

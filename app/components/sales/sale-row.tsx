@@ -2,12 +2,13 @@ import { faPrint, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRef } from "react";
 import { useReactToPrint } from 'react-to-print';
-import { Sale, useSaleStore, useTokenStore } from "../../lib/zustand";
+import { useSaleStore, useSessionStore } from "../../lib/zustand";
 import CurrencyFormatter from "../currency-formatter";
 import PrintableSale from "../printable-sale";
 import PaymentRow from "../payment-row";
 import { api } from "@/app/lib/axios";
 import { useRouter } from "next/navigation";
+import { Sale } from "@/app/lib/model";
 
 
 interface SaleRowProps {
@@ -25,7 +26,7 @@ export default function SaleRow(props: SaleRowProps) {
 
     const router = useRouter();
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { sales, setSales } = useSaleStore();
 
 
@@ -58,10 +59,10 @@ export default function SaleRow(props: SaleRowProps) {
         try {
 
 
-            const response = await api.delete(`/api/sales/${id}`,
+            const response = await api.delete(`/api/sales/${id}/shop/${session?.shopId}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

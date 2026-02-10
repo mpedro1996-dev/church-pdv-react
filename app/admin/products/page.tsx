@@ -6,14 +6,14 @@ import ProductRow from "@/app/components/admin/products/product-row";
 import FlexTableHeaders from "@/app/components/flex-table/flex-table-headers";
 import { api } from "@/app/lib/axios";
 import { Product } from "@/app/lib/model";
-import { useProductStore, useTokenStore } from "@/app/lib/zustand";
+import { useProductStore, useSessionStore } from "@/app/lib/zustand";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
 export default function Products() {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const [searchTerm, setSearchTerm] = useState('');
     const { products, setProducts } = useProductStore();
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -39,7 +39,7 @@ export default function Products() {
     useEffect(() => {
         async function GetProducts() {
 
-            if (!token) {
+            if (!session?.token) {
                 console.error('No token found');
                 return;
             }
@@ -47,7 +47,7 @@ export default function Products() {
             try {
                 const response = await api.get('/api/products', {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${session?.token}`,
                     },
                 });
 
@@ -62,7 +62,7 @@ export default function Products() {
         }
 
         GetProducts();
-    }, [token, setProducts]);
+    }, [session?.token, setProducts]);
 
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,7 +81,7 @@ export default function Products() {
             const response = api.delete(`/api/products/${productId}/${method}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

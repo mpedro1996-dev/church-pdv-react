@@ -4,7 +4,7 @@ import Product from "../components/pos/product";
 import { faWallet } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
-import { useProductStore, useSaleItemStore, useTokenStore } from "../lib/zustand"
+import { useProductStore, useSaleItemStore, useSessionStore } from "../lib/zustand"
 import { useEffect, useState } from "react";
 import { api } from '../lib/axios';
 
@@ -12,7 +12,7 @@ import { api } from '../lib/axios';
 export default function Sale() {
 
 
-  const { token } = useTokenStore();
+  const { session } = useSessionStore();
   const { products, setProducts } = useProductStore();
   const { saleItems } = useSaleItemStore();
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,7 +26,7 @@ export default function Sale() {
       try {
         const response = await api.get('/api/products', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${session?.token}`,
           },
         });
 
@@ -41,7 +41,7 @@ export default function Sale() {
     }
 
     GetProducts();
-  }, [token, setProducts]);
+  }, [session?.token, setProducts]);
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

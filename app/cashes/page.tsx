@@ -3,18 +3,13 @@
 
 import { useCallback, useEffect } from "react"
 import { api } from "../lib/axios"
-import { useCashStore, useTokenStore } from "../lib/zustand"
-
-import Navbar from "../components/navbar";
-import CurrencyFormatter from "../components/currency-formatter";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPrint } from "@fortawesome/free-solid-svg-icons";
+import { useCashStore, useSessionStore } from "../lib/zustand"
 import CashRow from "../components/cashes/cash-row";
 
 
 export default function CashFlows() {
 
-  const { token } = useTokenStore();
+  const { session } = useSessionStore();
 
   const { cashes, setCashes } = useCashStore()
 
@@ -24,7 +19,7 @@ export default function CashFlows() {
 
   const GetCashes = useCallback(async () => {
 
-    if (!token) {
+    if (!session?.token) {
       console.error('No token found');
       return;
     }
@@ -32,7 +27,7 @@ export default function CashFlows() {
     try {
       const response = await api.get('/api/cashes', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session?.token}`,
         },
       });
 
@@ -44,7 +39,7 @@ export default function CashFlows() {
     } catch (error) {
       console.error('GetCashes failed!', error);
     }
-  }, [token, setCashes])
+  }, [session?.token, setCashes])
 
 
 

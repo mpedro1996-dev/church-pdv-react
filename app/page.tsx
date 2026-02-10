@@ -5,14 +5,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from './lib/axios';
 import Input from './components/input';
 import ValidatorMessage from './components/validator-message';
-import { useTokenStore, useSaleItemStore, usePayValueStore, usePaymentStore } from './lib/zustand';
+import { useSessionStore, useSaleItemStore, usePayValueStore, usePaymentStore } from './lib/zustand';
 import { useRouter } from 'next/navigation';
 import CurrencyInput from './components/currency-input';
 
 
 const loginSchema = z.object({
     username: z.string().min(3, "Informe nome de usuário"),
-    password: z.string().min(4, "Informe a senha")
+    password: z.string().min(4, "Informe a senha"),
+    activationCode: z.string().min(6, "Informe o código de ativação"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>
@@ -23,7 +24,7 @@ export default function Login() {
         resolver: zodResolver(loginSchema)
     });
 
-    const { setToken } = useTokenStore();
+    const { setSession } = useSessionStore();
     const { setSaleItems } = useSaleItemStore();
     const { payValue, setPayValue } = usePayValueStore();
     const { setPayments } = usePaymentStore();
@@ -40,7 +41,7 @@ export default function Login() {
 
 
             if (result.isSuccess) {
-                setToken(response.data.value.authToken);
+                setSession(response.data.value);
                 setSaleItems([]);
                 setPayments([]);
                 setPayValue(0)
@@ -74,6 +75,10 @@ export default function Login() {
                         <div className="flex flex-col gap-1">
                             <Input register={register('password')} type="password" placeholder="Senha" />
                             {errors.password && <ValidatorMessage>{errors.password.message}</ValidatorMessage>}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <Input register={register('activationCode')} type="text" placeholder="Código de ativação" />
+                            {errors.activationCode && <ValidatorMessage>{errors.activationCode.message}</ValidatorMessage>}
                         </div>
                         <div className="flex items-center flex-row gap-1">
                             <label>Abertura de caixa:</label>

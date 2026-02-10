@@ -1,4 +1,4 @@
-import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "../input";
 import { z } from "zod";
@@ -21,8 +21,6 @@ interface NewMemberProps {
 
 export default function NewMember(props: NewMemberProps) {
 
-    const { setMember } = useMemberStore();
-
 
 
     const { handleSubmit, register, formState: { errors } } = useForm<MemberFormData>({
@@ -31,7 +29,6 @@ export default function NewMember(props: NewMemberProps) {
 
     function createMember(data: MemberFormData) {
 
-        console.log(data);
 
         props.closeModal(data);
 

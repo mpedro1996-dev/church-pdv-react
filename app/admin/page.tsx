@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MainMenuButton from "../components/admin/main-menu-button";
 import { faUser, faChurch, faBox, faShop, faGears } from "@fortawesome/free-solid-svg-icons"
-import Navbar from "../components/navbar";
+
 
 export default function Admin() {
     return (

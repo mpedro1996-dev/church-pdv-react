@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import User, {
+import {
   Product,
   SaleItem,
   Member,
@@ -8,29 +8,31 @@ import User, {
   Sale,
   Ministry,
   Courtesy,
-  Shop
+  Shop,
+  User,
+  Session
 } from './model';
 
-interface TokenState {
-  token: string | null;
-  setToken: (token: string) => void;
-  clearToken: () => void;
+interface SessionState {
+  session: Session | null;
+  setSession: (session: Session) => void;
+  clearSession: () => void;
 }
 
-const useTokenStore = create(
-  persist<TokenState>(
+const useSessionStore = create(
+  persist<SessionState>(
     (set) => ({
-      token: null,
-      setToken: (token) => {
-        set({ token: token });
+      session: null,
+      setSession: (session) => {
+        set({ session: session });
       },
-      clearToken: () => {
-        set({ token: null });
+      clearSession: () => {
+        set({ session: null });
         sessionStorage.clear();
       },
     }),
     {
-      name: 'userLoginStatus',
+      name: 'Session-storage',
       storage: createJSONStorage(() => sessionStorage),
     }
   )
@@ -272,7 +274,7 @@ const useUserStore = create<UserState>((set) => ({
 
 
 export {
-  useTokenStore,
+  useSessionStore,
   useProductStore,
   useSaleStore,
   useSaleItemStore,

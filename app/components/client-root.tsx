@@ -4,7 +4,7 @@ import React, { use, useEffect, useState } from "react";
 import Navbar from "./navbar";
 import AxiosInterceptor from "./axios-interceptor";
 import GlobalLoading from "./global-loading";
-import { useTokenStore } from "../lib/zustand";
+import { useSessionStore } from "../lib/zustand";
 import Loading from "./loading";
 
 
@@ -15,7 +15,7 @@ interface Props {
 
 export default function ClientRoot({ children, className }: Props) {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [ready, setReady] = useState(false);
 
@@ -23,11 +23,10 @@ export default function ClientRoot({ children, className }: Props) {
 
     useEffect(() => {
 
-        setIsLoggedIn(token !== null);
+        setIsLoggedIn(session !== null);
         setReady(true);
 
-    }, [token]);
-
+    }, [session]);
 
     if (!ready) {
         return (

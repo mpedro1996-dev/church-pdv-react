@@ -12,7 +12,7 @@ import ConfirmButton from "../../forms/confirm-button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { api } from "@/app/lib/axios";
-import { useProductStore, useTokenStore, useUserStore } from "@/app/lib/zustand";
+import { useProductStore, useSessionStore } from "@/app/lib/zustand";
 import { use, useEffect, useMemo, useState } from "react";
 import { Product } from "@/app/lib/model";
 import CurrencyInput from "../../currency-input";
@@ -62,7 +62,7 @@ type ProductFormData = z.infer<ReturnType<typeof makeProductSchema>>;
 
 export default function ProductEdit(props: ProductEditProps) {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { isEditing, id } = props;
     const { products, setProducts } = useProductStore();
     const [name, setName] = useState('');
@@ -121,7 +121,7 @@ export default function ProductEdit(props: ProductEditProps) {
             const response = api.post('/api/products', data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );
@@ -132,7 +132,7 @@ export default function ProductEdit(props: ProductEditProps) {
             const response = api.put(`/api/products/${props.id}`, data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

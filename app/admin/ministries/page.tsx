@@ -6,14 +6,14 @@ import NavMenu from "@/app/components/admin/navmenu";
 import FlexTableHeaders from "@/app/components/flex-table/flex-table-headers";
 import { api } from "@/app/lib/axios";
 import { Ministry } from "@/app/lib/model";
-import { useMinistryStore, useTokenStore } from "@/app/lib/zustand";
+import { useMinistryStore, useSessionStore } from "@/app/lib/zustand";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
 export default function Ministries() {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { ministries, setMinistries } = useMinistryStore();
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -43,7 +43,7 @@ export default function Ministries() {
     useEffect(() => {
         async function GetMinistries() {
 
-            if (!token) {
+            if (!session?.token) {
                 console.error('No token found');
                 return;
             }
@@ -51,7 +51,7 @@ export default function Ministries() {
             try {
                 const response = await api.get('/api/ministries', {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${session?.token}`,
                     },
                 });
 
@@ -66,7 +66,7 @@ export default function Ministries() {
         }
 
         GetMinistries();
-    }, [token, setMinistries]);
+    }, [session?.token, setMinistries]);
 
 
     async function handleOnChangeActive(ministryId: number) {
@@ -80,7 +80,7 @@ export default function Ministries() {
             const response = api.delete(`/api/ministries/${ministryId}/${method}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

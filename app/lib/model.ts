@@ -1,5 +1,13 @@
 import exp from "constants";
 
+
+export interface Session {
+    token: string,
+    cashId: number,
+    shopId: number,
+    logo: string
+}
+
 export interface User {
     id: number,
     name: string,

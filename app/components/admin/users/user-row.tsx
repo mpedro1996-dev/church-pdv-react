@@ -3,7 +3,7 @@
 import { faEdit, faKey, faLock, faTrash, faUnlock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FlexTableRow from "../../flex-table/flex-table-row";
-import User from "@/app/lib/model";
+import { User } from "@/app/lib/model";
 import ActivateButtons from "../../flex-table/activate-buttons";
 import ActionButton from "../../flex-table/action-button";
 

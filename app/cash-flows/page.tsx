@@ -6,7 +6,7 @@ import { faLock, faPlus } from "@fortawesome/free-solid-svg-icons"
 import CurrencyInput from "../components/currency-input"
 import { useCallback, useEffect, useState } from "react"
 import { api } from "../lib/axios"
-import { useCashFlowStore, usePayValueStore, useTokenStore } from "../lib/zustand"
+import { useCashFlowStore, usePayValueStore, useSessionStore } from "../lib/zustand"
 import CashFlowRow from "../components/cash-flows/cash-flow-row"
 
 import CurrencyFormatter from "../components/currency-formatter"
@@ -26,7 +26,7 @@ type CashFlowFormData = z.infer<typeof cashFlowSchema>
 
 export default function CashFlows() {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { cashFlows, setCashFlows } = useCashFlowStore();
 
     const { payValue, setPayValue } = usePayValueStore();
@@ -50,15 +50,15 @@ export default function CashFlows() {
 
     const GetCashFlows = useCallback(async () => {
 
-        if (!token) {
+        if (!session?.token) {
             console.error('No token found');
             return;
         }
 
         try {
-            const response = await api.get('/api/cash-flows', {
+            const response = await api.get(`/api/cash-flows/cash/${session?.cashId}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${session?.token}`,
                 },
             });
 
@@ -71,7 +71,7 @@ export default function CashFlows() {
         } catch (error) {
             console.error('GetCashFlows failed!', error);
         }
-    }, [token, setCashFlows])
+    }, [session?.token, setCashFlows])
 
 
 
@@ -173,10 +173,10 @@ export default function CashFlows() {
         }
 
         try {
-            const response = await api.post('/api/cash-flows', { ...data, "cashFlowValue": payValue },
+            const response = await api.post('/api/cash-flows', { ...data, "cashFlowValue": payValue, "cashId": session?.cashId },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

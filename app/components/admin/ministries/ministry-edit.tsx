@@ -12,7 +12,7 @@ import ConfirmButton from "../../forms/confirm-button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { api } from "@/app/lib/axios";
-import { useMinistryStore, useTokenStore } from "@/app/lib/zustand";
+import { useMinistryStore, useSessionStore } from "@/app/lib/zustand";
 import { useEffect, useState } from "react";
 
 
@@ -33,7 +33,7 @@ type MinistryFormData = z.infer<typeof ministrySchema>
 
 export default function MinistryEdit(props: MinistryEditProps) {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const { ministries, setMinistries } = useMinistryStore();
     const { isEditing, id } = props;
 
@@ -81,7 +81,7 @@ export default function MinistryEdit(props: MinistryEditProps) {
             const response = api.post('/api/ministries', data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );
@@ -92,7 +92,7 @@ export default function MinistryEdit(props: MinistryEditProps) {
             const response = api.put(`/api/ministries/${props.id}`, data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

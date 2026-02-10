@@ -1,7 +1,7 @@
 import { faFloppyDisk, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { api } from "../../lib/axios";
-import { useTokenStore, useUiStore } from "../../lib/zustand";
+import { useSessionStore, useUiStore } from "../../lib/zustand";
 import { useState } from "react";
 
 
@@ -13,7 +13,7 @@ interface UpdatePaymentProps {
 
 export default function UpdatePayment(props: UpdatePaymentProps) {
 
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
     const loading = useUiStore((s) => s.loading);
     const [paymentType, setPaymentType] = useState(props.paymentType);
 
@@ -35,7 +35,7 @@ export default function UpdatePayment(props: UpdatePaymentProps) {
             const response = await api.put(`/api/payments/${props.id}`, data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );

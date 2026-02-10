@@ -9,7 +9,7 @@ import { faCreditCard as farCreditCard } from "@fortawesome/free-regular-svg-ico
 import CurrencyInput from "../components/currency-input"
 import CurrencyFormatter from "../components/currency-formatter"
 import PaymentType from "../components/payments/payment-type"
-import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useTokenStore, useMemberStore, Sale } from "../lib/zustand"
+import { usePaymentStore, usePaymentTypeStore, usePayValueStore, useSaleItemStore, useSessionStore, useMemberStore } from "../lib/zustand"
 import { use, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import PaymentItem from "../components/payments/payment-item"
@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import PrintableSale from "../components/printable-sale"
 import { useReactToPrint } from "react-to-print"
 import NewMember from "../components/payments/new-member"
+import { Sale } from "../lib/model"
 
 interface Member {
     name: string,
@@ -39,7 +40,7 @@ export default function Payment() {
     const { payments, setPayments, addPayment } = usePaymentStore()
     const [remainValue, setRemainValue] = useState(0);
     const [changeValue, setChangeValue] = useState(0);
-    const { token } = useTokenStore();
+    const { session } = useSessionStore();
 
     const [saleSuccessing, setSaleSuccessing] = useState(false);
     const router = useRouter();
@@ -216,14 +217,15 @@ export default function Payment() {
         try {
             const data = {
                 "saleItems": saleItems.map((saleItem) => ({ "productId": saleItem.product.id, "price": saleItem.product.price, "quantity": saleItem.quantity })),
-                "payments": payments.map((payment) => ({ "paymentType": payment.paymentType, "value": payment.value, "member": payment.member }))
+                "payments": payments.map((payment) => ({ "paymentType": payment.paymentType, "value": payment.value, "member": payment.member })),
+                "cashId": session?.cashId
             };
 
             const response = await api.post("/api/sales",
                 data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${session?.token}`
                     }
                 }
             );
