@@ -18,7 +18,7 @@ export default function ShopRow(props: ShopRowProps) {
         <FlexTableRow active={shop.active}>
 
             <div className="flex flex-1 text-left items-center gap-2">
-                <img src={`/${shop.logo}`} alt={shop.logo} width={100} height={50} /> {shop.name}
+                <img src={`/${shop.logo}`} alt={shop.logo} width={100} height={50} /> <a href={`/admin/shops/${shop.id}`} className="underline underline-offset-4 hover:text-blue-500">{shop.name}</a>
             </div>
 
 

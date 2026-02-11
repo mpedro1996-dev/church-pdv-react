@@ -24,7 +24,7 @@ export default function Sale() {
     async function GetProducts() {
 
       try {
-        const response = await api.get('/api/products', {
+        const response = await api.get(`/api/products-shops/shop/${session?.shopId}`, {
           headers: {
             Authorization: `Bearer ${session?.token}`,
           },
