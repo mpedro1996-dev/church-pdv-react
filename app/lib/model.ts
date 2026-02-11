@@ -96,3 +96,10 @@ export interface Theme {
     image: string
 }
 
+export interface ActivationCode {
+    id: number,
+    shopId: number,
+    code: string,
+    active: boolean
+}
+

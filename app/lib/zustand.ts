@@ -10,7 +10,8 @@ import {
   Courtesy,
   Shop,
   User,
-  Session
+  Session,
+  ActivationCode
 } from './model';
 
 interface SessionState {
@@ -201,6 +202,15 @@ const useShopStore = create<ShopState>((set) => ({
   setShops: (shops) => set({ shops: shops })
 }))
 
+interface ActivationCodeState {
+  activationCodes: ActivationCode[],
+  setActivationCodes: (activationCodes: ActivationCode[]) => void
+}
+
+const useActivationCodeStore = create<ActivationCodeState>((set) => ({
+  activationCodes: [],
+  setActivationCodes: (activationCodes) => set({ activationCodes: activationCodes })
+}))
 
 
 
@@ -288,5 +298,6 @@ export {
   useCashStore,
   useUiStore,
   useUserStore,
-  useShopStore
+  useShopStore,
+  useActivationCodeStore
 };

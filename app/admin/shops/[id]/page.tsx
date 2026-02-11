@@ -74,8 +74,8 @@ export default function ShopPage(
                             <NavShop selected={tabSelected} OnTabSelected={handleTabSelected} />
                         </div>
 
-                        <div className="flex-1 p-2 items-start gap-4">
-                            {tabSelected === "activation-codes" && <TabActivationCodes />}
+                        <div className="flex-1 p-2 items-start gap-4 w-1/3 mt-2">
+                            {tabSelected === "activation-codes" && <TabActivationCodes shopId={id} />}
                             {tabSelected === "products" && <TabProductShops />}
                         </div>
 
