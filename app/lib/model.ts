@@ -102,4 +102,3 @@ export interface ActivationCode {
     code: string,
     active: boolean
 }
-

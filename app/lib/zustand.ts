@@ -58,6 +58,17 @@ const useProductStore = create<ProductState>((set) => ({
 }));
 
 
+interface ProductShopState {
+  productShops: Product[];
+  setProductShops: (productShops: Product[]) => void;
+}
+
+const useProductShopStore = create<ProductShopState>((set) => ({
+  productShops: [],
+  setProductShops: (productShops) => set({ productShops })
+}));
+
+
 
 
 interface SaleItemState {
@@ -299,5 +310,6 @@ export {
   useUiStore,
   useUserStore,
   useShopStore,
-  useActivationCodeStore
+  useActivationCodeStore,
+  useProductShopStore
 };

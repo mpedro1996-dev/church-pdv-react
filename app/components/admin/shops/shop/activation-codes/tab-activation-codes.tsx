@@ -106,7 +106,7 @@ export default function TabActivationCodes(props: TabActivationCodesProps) {
     }, [session?.token, setActivationCodes]);
 
     return (
-        <>
+        <div className="w-1/3">
 
             <div className="flex flex-row mb-2 mx-2 gap-1">
                 <button type="button" className="text-white bg-green-600 border rounded border-green-400 p-2 flex items-center gap-1 w-auto" onClick={() => handleCreateActivationCode()}><FontAwesomeIcon icon={faPlus} />Novo Código de Ativação</button>
@@ -117,6 +117,6 @@ export default function TabActivationCodes(props: TabActivationCodesProps) {
                     <ActivationCodeRow key={activationCode.id} activationCode={activationCode} onDelete={handleDeleteActivationCode} />
                 ))}
             </div>
-        </>
+        </div>
     )
 }
