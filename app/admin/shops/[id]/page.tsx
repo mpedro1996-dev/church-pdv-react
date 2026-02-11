@@ -76,7 +76,7 @@ export default function ShopPage(
 
                         <div className="flex-1 p-2 items-start gap-4 mt-2">
                             {tabSelected === "activation-codes" && <TabActivationCodes shopId={id} />}
-                            {tabSelected === "products" && <TabProductShops />}
+                            {tabSelected === "products" && <TabProductShops shopId={id} />}
                         </div>
 
 

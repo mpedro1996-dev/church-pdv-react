@@ -1,11 +1,7 @@
 import FlexTableHeaders from "@/app/components/flex-table/flex-table-headers";
-import ActivationCodeRow from "../activation-codes/activation-code-row";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useProductShopStore, useProductStore, useSessionStore } from "@/app/lib/zustand";
 import { api } from "@/app/lib/axios";
-import ProductRow from "../../../products/product-row";
 import ProductShopRow from "./product-shop-row";
 
 interface TabProductShopsProps {
@@ -19,8 +15,55 @@ export default function TabProductShops({ shopId }: TabProductShopsProps) {
     const { productShops, setProductShops } = useProductShopStore();
     const [searchTerm, setSearchTerm] = useState('');
 
-    const handleDeleteActivationCode = (id: number) => {
-        console.log("Delete activation code with id:", id);
+    async function handleAddProductShop(id: number) {
+
+        var product = products.find(p => p.id === id);
+
+        var data = {
+            productId: product?.id,
+            shopId: shopId,
+            unitPrice: product?.price
+
+        }
+
+
+        try {
+            const response = await api.post('/api/products-shops', data, {
+                headers: {
+                    Authorization: `Bearer ${session?.token}`,
+                },
+            });
+
+            const result = response.data;
+
+            if (result.isSuccess) {
+                setProductShops([...productShops, result.value]);
+            }
+
+        } catch (error) {
+            console.error('GetProducts failed!', error);
+        }
+
+    }
+
+    async function handleRemoveProductShop(id: number) {
+
+        try {
+            const response = await api.delete(`/api/products-shops/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${session?.token}`,
+                },
+            });
+
+            const result = response.data;
+
+            if (result.isSuccess) {
+                setProductShops(productShops.filter(p => p.productShopId !== id));
+            }
+
+        } catch (error) {
+            console.error('GetProducts failed!', error);
+        }
     }
 
     const headerProducts = [
@@ -65,7 +108,7 @@ export default function TabProductShops({ shopId }: TabProductShopsProps) {
             }
 
             try {
-                const response = await api.get(`/api/product-shops/shop/${shopId}`, {
+                const response = await api.get(`/api/products-shops/shop/${shopId}`, {
                     headers: {
                         Authorization: `Bearer ${session?.token}`,
                     },
@@ -82,11 +125,12 @@ export default function TabProductShops({ shopId }: TabProductShopsProps) {
         }
 
         GetProducts();
-    }, [session?.token, setProducts]);
+        GetProductShops();
+    }, [session?.token, setProductShops]);
 
     const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (product.barcode && product.barcode == Number(searchTerm)) &&
+        (product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (product.barcode && product.barcode == Number(searchTerm))) &&
         !productShops.some(ps => ps.id === product.id)
     );
 
@@ -109,13 +153,13 @@ export default function TabProductShops({ shopId }: TabProductShopsProps) {
                     <div className="mx-2 border rounded w-1/2">
                         <FlexTableHeaders headers={headerProducts} hasActionButton={true} />
                         {filteredProducts.map((product) => (
-                            <ProductShopRow key={product.id} product={product} onAdd={() => { }} />
+                            <ProductShopRow key={product.id} product={product} onAdd={() => handleAddProductShop(product.id)} />
                         ))}
                     </div>
                     <div className="mx-2 border rounded w-1/2">
                         <FlexTableHeaders headers={headerProductShops} hasActionButton={true} />
                         {filteredProductShops.map((product) => (
-                            <ProductShopRow key={product.id} product={product} onRemove={() => { }} />
+                            <ProductShopRow key={product.id} product={product} onRemove={() => handleRemoveProductShop(product.productShopId)} />
                         ))}
                     </div>
                 </div>

@@ -27,8 +27,8 @@ export default function ProductShopRow({ product, onAdd, onRemove }: ProductShop
             </div>
             <div className="flex-1 text-right space-x-1">
 
-                {onAdd && <button className="text-green-500" onClick={() => onAdd(product.id)}><FontAwesomeIcon icon={faPlus} /></button>}
-                {onRemove && <button className="text-red-500" onClick={() => onRemove(product.id)}><FontAwesomeIcon icon={faMinus} /></button>}
+                {onAdd && <button className="text-green-500 border rounded px-2 py-1 hover:bg-zinc-100" onClick={() => onAdd(product.id)}><FontAwesomeIcon icon={faPlus} /></button>}
+                {onRemove && <button className="text-red-500 border rounded px-2 py-1 hover:bg-zinc-100" onClick={() => onRemove(product.id)}><FontAwesomeIcon icon={faMinus} /></button>}
 
             </div>
         </FlexTableRow >

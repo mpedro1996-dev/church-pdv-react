@@ -24,6 +24,7 @@ export interface Ministry {
 
 export interface Product {
     id: number,
+    productShopId: number,
     name: string,
     barcode: number,
     price: number,
